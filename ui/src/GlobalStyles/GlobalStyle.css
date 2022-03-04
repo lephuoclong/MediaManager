@@ -4,10 +4,11 @@ body {
   margin: 0;
 }
 a {
-  color: #f79f1a;
+  color: #f79f1a !important;
+  text-decoration: none !important;
 }
 a:hover,
 a:focus {
-  text-decoration: none;
-  color: #dadada;
+  text-decoration: none !important;
+  color: #dadada !important;
 }

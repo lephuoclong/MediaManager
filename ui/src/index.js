@@ -5,10 +5,9 @@ import ReactDOM from "react-dom";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { applyMiddleware, createStore } from "redux";
-import "./GlobalStyles/GlobalStyle.css";
 import thunkMiddleware from "redux-thunk";
 
-import MyReducer from "./Redux/Reducers/index";
+import MyReducer from "./Redux/index";
 import { Provider } from "react-redux";
 
 const store = createStore(MyReducer, applyMiddleware(thunkMiddleware));

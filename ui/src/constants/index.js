@@ -45,8 +45,15 @@ export const LIGHT_THEME = {
   },
 };
 export const PAGE_PATHS = {
-  DASHBOARD: "",
+  DASHBOARD: "dashboard",
   CONTENT: "contents",
   DATAROOM: "data-room",
-  SETTING: "setting",
+  SETTING: "settings",
+  MY_FOLDER: "my-folder",
+  SHARE_WITH_ME: "share-with-me",
+  FAVORITES: "favorites",
+  GARBAGE: "garbage",
+};
+export const MODEL_NAME = {
+  SEARCH_HEADER_MODEL: "SEARCH_HEADER_MODEL",
 };
