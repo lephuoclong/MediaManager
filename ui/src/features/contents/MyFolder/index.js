@@ -1,11 +1,13 @@
 /** @format */
 
-import { Dropdown, Stack, Text } from "@fluentui/react";
+import { Breadcrumb, Dropdown, Stack, Text } from "@fluentui/react";
 import React, { useEffect, useState } from "react";
 import GridComponent from "../../../components/layoutComponent/GridComponent";
 import ListComponent from "../../../components/layoutComponent/ListComponent";
 import SpinnerLoading from "../../../components/multipleComponents/SpinnerLoading";
+import { itemsFolderTree } from "../../../constants/initialApi/items";
 import { TEXT_TITLE, WH_100 } from "../../../constants/styles";
+import MyFolderLayout from "./MyFolderLayout";
 
 const dropdownStyles = {
   caretDown: { display: "none" },
@@ -16,6 +18,21 @@ const displayTabStyles = {
   root: {
     ...WH_100.root,
     display: "flex",
+  },
+};
+
+const wrapContent = {
+  root: {
+    ...WH_100.root,
+    display: "flex",
+  },
+};
+
+const contentFolderStyles = {
+  root: {
+    overflowY: "auto",
+    overflowX: "hidden",
+    height: "calc(100vh - 194px)",
   },
 };
 
@@ -62,7 +79,16 @@ export default function MyFolder() {
         <SpinnerLoading />
       ) : (
         <Stack grow={1}>
-          {isListLayout ? <ListComponent /> : <GridComponent />}
+          <Stack styles={wrapContent}>
+            <Breadcrumb
+              items={itemsFolderTree}
+              maxDisplayedItems={5}
+              overflowIndex={1}
+            />
+            <Stack grow={1} styles={contentFolderStyles}>
+              <MyFolderLayout isEmptyItem={isListLayout} />
+            </Stack>
+          </Stack>
         </Stack>
       )}
     </Stack>

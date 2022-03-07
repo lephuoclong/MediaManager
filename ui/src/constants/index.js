@@ -57,3 +57,9 @@ export const PAGE_PATHS = {
 export const MODEL_NAME = {
   SEARCH_HEADER_MODEL: "SEARCH_HEADER_MODEL",
 };
+export const ROWS_PER_PAGE = {
+  FIVE: 5,
+  TEN: 10,
+  FIFTEEN: 15,
+  TWENTY: 20,
+};

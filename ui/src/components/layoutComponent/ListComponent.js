@@ -49,102 +49,97 @@ const items = [
   },
 ];
 
+const randomName = (length = 8) => {
+  let chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let str = "";
+  for (let i = 0; i < length; i++) {
+    str += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return str;
+};
+
+const randomType = type => {
+  const types = [
+    "folder",
+    "doc",
+    "pdf",
+    "ppt",
+    "excel",
+    "png",
+    "jpg",
+    "mp3",
+    "mp4",
+  ];
+  const icon = [
+    "OpenFolderHorizontal",
+    "WordDocument",
+    "PDF",
+    "ExcelDocument",
+    "PowerPointDocument",
+    "PictureFill",
+    "PictureCenter",
+    "MusicInCollectionFill",
+    "MSNVideos",
+  ];
+  const getIndex =
+    parseInt(type, 10) === 1 ? 0 : Math.floor(Math.random() * types.length);
+  return {
+    fileType: types[getIndex],
+    iconName: icon[getIndex],
+  };
+};
+
+const randomDate = (begin, end) => {
+  const date = new Date(
+    begin.getTime() + Math.random() * (end.getTime() - begin.getTime())
+  );
+  const value = date.getTime();
+  return value;
+};
+
+const randomFileSize = () => {
+  const fileSize = Math.floor(Math.random() * 100) + 30;
+  return `${fileSize} KB`;
+};
+
+const getItem = () => {
+  const items = [];
+  for (let i = 0; i < 500; i++) {
+    if (i < 10) {
+      items.push({
+        fileName: randomName(Math.floor(Math.random() * 10) + 20),
+        fileCreate: randomDate(new Date(2012, 0, 1), new Date()),
+        fileAuthor: randomName(Math.floor(Math.random() * 5) + 10),
+        fileSize: "",
+        ...randomType(1),
+      });
+    } else {
+      items.push({
+        fileName: randomName(Math.floor(Math.random() * 10) + 20),
+        fileCreate: randomDate(new Date(2012, 0, 1), new Date()),
+        fileAuthor: randomName(Math.floor(Math.random() * 5) + 10),
+        fileSize: randomFileSize(),
+        ...randomType(),
+      });
+    }
+  }
+  return items;
+};
+
+const itemss = getItem();
+
 export default function ListComponent() {
   const [listFile, setListFile] = useState([]);
 
   useEffect(() => {
-    setListFile(_getItem());
+    console.log(itemss);
+    setListFile(itemss);
   }, []);
-
-  const randomName = (length = 8) => {
-    let chars =
-      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    let str = "";
-    for (let i = 0; i < length; i++) {
-      str += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return str;
-  };
-
-  const randomType = type => {
-    const types = [
-      "folder",
-      "doc",
-      "pdf",
-      "ppt",
-      "excel",
-      "png",
-      "jpg",
-      "mp3",
-      "mp4",
-    ];
-    const icon = [
-      "OpenFolderHorizontal",
-      "WordDocument",
-      "PDF",
-      "ExcelDocument",
-      "PowerPointDocument",
-      "PictureFill",
-      "PictureCenter",
-      "MusicInCollectionFill",
-      "MSNVideos",
-    ];
-    const getIndex =
-      parseInt(type, 10) === 1 ? 0 : Math.floor(Math.random() * types.length);
-    return {
-      fileType: types[getIndex],
-      iconName: icon[getIndex],
-    };
-  };
-
-  const randomDate = (begin, end) => {
-    const date = new Date(
-      begin.getTime() + Math.random() * (end.getTime() - begin.getTime())
-    );
-    return {
-      value: date.valueOf(),
-      dateFormatted: date.toLocaleDateString(),
-    };
-  };
-
-  const randomFileSize = () => {
-    const fileSize = Math.floor(Math.random() * 100) + 30;
-    return {
-      value: `${fileSize} KB`,
-      rawSize: fileSize,
-    };
-  };
-
-  const _getItem = () => {
-    const items = [];
-    for (let i = 0; i < 500; i++) {
-      if (i < 10) {
-        items.push({
-          fileName: randomName(Math.floor(Math.random() * 10) + 20),
-          fileCreate: randomDate(new Date(2012, 0, 1), new Date()),
-          fileAuthor: randomName(Math.floor(Math.random() * 5) + 10),
-          fileSize: "",
-          ...randomType(1),
-        });
-      } else {
-        items.push({
-          fileName: randomName(Math.floor(Math.random() * 10) + 20),
-          fileCreate: randomDate(new Date(2012, 0, 1), new Date()),
-          fileAuthor: randomName(Math.floor(Math.random() * 5) + 10),
-          fileSize: randomFileSize(),
-          ...randomType(),
-        });
-      }
-    }
-    return items;
-  };
 
   return (
     <Stack styles={wrapContent}>
       <Breadcrumb items={items} maxDisplayedItems={5} overflowIndex={1} />
-      <Stack grow={1} styles={contentFolderStyles}>
-        <DetailsList items={listFile} />
-      </Stack>
+      <Stack grow={1} styles={contentFolderStyles}></Stack>
     </Stack>
   );
 }
