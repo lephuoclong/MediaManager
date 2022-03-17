@@ -48,6 +48,7 @@ export default function MyFolderLayout(props) {
       }}></ContentFolderList>
   );
 }
+
 MyFolderLayout.propTypes = {
   isEmptyItem: PropTypes.bool.isRequired,
 };

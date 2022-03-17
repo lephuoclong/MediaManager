@@ -16,11 +16,14 @@ import java.util.Map;
 @RequestMapping("check-in")
 public class CheckInController extends BaseController {
 
+    public CheckInController(Pipeline pipeline) {
+        super(pipeline);
+    }
 
     @GetMapping()
     public ResponseEntity<?> check(){
-//        var query = new CheckApi().setAccountId(getAccountIdFromToken());
+        var query = new CheckApi();
         System.out.println("okkokokok");
-        return ResponseEntity.status(HttpStatus.ACCEPTED).build();
+        return handle(query);
     }
 }
