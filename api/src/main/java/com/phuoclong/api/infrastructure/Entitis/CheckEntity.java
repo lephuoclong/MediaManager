@@ -1,4 +1,4 @@
-package com.phuoclong.api.infrastructure.Entity;
+package com.phuoclong.api.infrastructure.Entitis;
 
 import lombok.*;
 import org.hibernate.annotations.GenericGenerator;

@@ -1,13 +1,11 @@
-package com.phuoclong.api.infrastructure.Entity;
+package com.phuoclong.api.infrastructure.Entitis;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.UUID;
 
 @MappedSuperclass
 @Data
