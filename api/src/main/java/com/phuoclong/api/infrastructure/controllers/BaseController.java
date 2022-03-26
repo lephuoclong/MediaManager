@@ -35,4 +35,12 @@ public class BaseController {
         var result = command.execute(pipeline);
         return ResponseEntity.ok(result);
     }
+
+//    protected <T> ResponseEntity<T> handleWithResponseEntity(Command<ResponseEntity<T>> command){
+//        try{
+//            if(command instanceof BaseIdentityCommand<?>){
+//
+//            }
+//        }
+//    }
 }
