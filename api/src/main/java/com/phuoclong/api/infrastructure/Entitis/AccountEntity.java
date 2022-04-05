@@ -12,8 +12,13 @@ import java.util.UUID;
 
 @Entity
 @Data
-@Table(name = "account", indexes = {
-        @Index(name = "IX_ACCOUNT_EMAIL", columnList = "email", unique = true)
+@Table(name = "account",uniqueConstraints = {
+        @UniqueConstraint(columnNames = "email")
+},indexes = {
+        @Index(name = "IX_ACCOUNT_EMAIL", columnList = "email", unique = true),
+        @Index(name = "IX_ACCOUNT_FIRSTNAME", columnList = "firstName", unique = true),
+        @Index(name = "IX_ACCOUNT_LASTNAME", columnList = "lastName", unique = true)
+
 })
 @AllArgsConstructor(staticName = "of")
 @NoArgsConstructor
