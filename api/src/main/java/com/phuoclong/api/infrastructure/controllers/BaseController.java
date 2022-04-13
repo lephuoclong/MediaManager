@@ -9,7 +9,7 @@ import com.phuoclong.api.infrastructure.command.BaseIdentityCommand;
 import com.phuoclong.api.infrastructure.response.ResponseMessage;
 import com.phuoclong.api.infrastructure.response.ResponseMessageOf;
 import com.phuoclong.api.infrastructure.services.AuthenticationManager;
-
+import io.jsonwebtoken.Jwt;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -17,7 +17,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RestController;
@@ -28,22 +27,36 @@ import java.util.HashMap;
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 @PreAuthorize("hasRole('public_site')")
+@AllArgsConstructor
 public class BaseController {
 
-    private final Pipeline pipeline;
+    private  Pipeline pipeline;
 
-    private final AuthenticationManager authenticationManager;
+    private  AuthenticationManager authenticationManager;
 
-    private final AccountService accountService;
+    private  AccountService accountService;
 
     private static final Logger logger = LoggerFactory.getLogger(ErrorController.class);
+
+    protected String getAccountId(){
+        var token = (Jwt) this.authenticationManager.getAuthentication().getPrincipal();
+        return  null;
+    }
+
+    protected AccountEntity getAccountInfo(){
+        var accountId = getAccountId();
+
+        return null;
+    }
+
+
 
     protected <T> ResponseEntity<T> handle(Command<T> command) {
         try
         {
-//            if(command instanceof BaseIdentityCommand<?>)
-//            {
-//                var account = getAccountInfo();
+            if(command instanceof BaseIdentityCommand<?>)
+            {
+                var account = getAccountInfo();
 
 //                if (
 //                        Boolean.TRUE.equals(
@@ -54,9 +67,8 @@ public class BaseController {
 //                    return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 //                }
 
-//                ((BaseIdentityCommand<T>) command).setAccountId(account.getId());
-//                ((BaseIdentityCommand<T>) command).setCompanyId(account.getActiveCompanyId());
-//            }
+                ((BaseIdentityCommand<T>) command).setAccountId(account.getId());
+            }
 
             var result = command.execute(pipeline);
 
@@ -72,9 +84,9 @@ public class BaseController {
     protected <T> ResponseEntity<?> handleWithResponseMessage(Command<ResponseMessageOf<T>> command) {
         try {
 
-//            if(command instanceof BaseIdentityCommand<?>)
-//            {
-//                var account = getAccountInfo();
+            if(command instanceof BaseIdentityCommand<?>)
+            {
+                var account = getAccountInfo();
 
 //                if (
 //                        Boolean.TRUE.equals(
@@ -87,9 +99,9 @@ public class BaseController {
 //                    return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
 //                }
 
-//                ((BaseIdentityCommand<ResponseMessageOf<T>>) command).setAccountId(account.getId());
+                ((BaseIdentityCommand<ResponseMessageOf<T>>) command).setAccountId(account.getId());
 //                ((BaseIdentityCommand<ResponseMessageOf<T>>) command).setCompanyId(account.getActiveCompanyId());
-//            }
+            }
 
             var message= command.execute(pipeline);
 

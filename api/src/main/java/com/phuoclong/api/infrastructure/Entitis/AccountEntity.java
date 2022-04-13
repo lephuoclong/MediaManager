@@ -36,6 +36,9 @@ public class AccountEntity extends BaseAudiEntity {
     @Column(length = 50,columnDefinition = "nvarchar(50)")
     String lastName;
 
+    @Column(length = 50, columnDefinition = "nvarchar(50)")
+    String username;
+
     @Column(length = 200,nullable = false,columnDefinition = "nvarchar(200)")
     String email;
 
@@ -47,4 +50,8 @@ public class AccountEntity extends BaseAudiEntity {
     //    0: sign in, 1: active, -1: deleted, 2 block
     @Column(nullable = false)
     Integer status = 0;
+
+    @Column(columnDefinition = "nvarchar(500)")
+    String token;
+
 }

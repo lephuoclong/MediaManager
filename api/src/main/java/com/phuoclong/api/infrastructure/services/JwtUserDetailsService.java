@@ -22,20 +22,21 @@ public class JwtUserDetailsService implements UserDetailsService {
     private AccountRepository accountRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        var accountEntity = accountRepository.findByEmail(email);
+        var accountEntity = accountRepository.findByUsername(username);
 
         if (accountEntity.isEmpty()){
-            throw new UsernameNotFoundException("User not found with email: " + email);
+            throw new UsernameNotFoundException("User not found with username: " + username);
         }
-        return new org.springframework.security.core.userdetails.User(accountEntity.get().getEmail(),
+        return new org.springframework.security.core.userdetails.User(accountEntity.get().getUsername(),
                 accountEntity.get().getPassword(), new ArrayList<>());
     }
 
     public AccountEntity save(RegisterAccount registerAccount){
         var accountEntity = new AccountEntity();
-        accountEntity.setFirstName(registerAccount.getFistName());
+        accountEntity.setFirstName(registerAccount.getFirstName());
+        accountEntity.setUsername(registerAccount.getUsername());
         accountEntity.setLastName(registerAccount.getLastName());
         accountEntity.setEmail(registerAccount.getEmail());
         accountEntity.setPassword(registerAccount.getPassword());

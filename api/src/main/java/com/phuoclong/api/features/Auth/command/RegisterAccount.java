@@ -1,13 +1,12 @@
 package com.phuoclong.api.features.Auth.command;
 
-import com.phuoclong.api.infrastructure.command.BaseIdentityCommand;
-import com.phuoclong.api.infrastructure.response.ResponseMessage;
+import an.awesome.pipelinr.Command;
+import com.phuoclong.api.features.Auth.responses.RegisterResponse;
 import com.phuoclong.api.infrastructure.response.ResponseMessageOf;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.FieldNameConstants;
-import org.springframework.http.ResponseEntity;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
@@ -16,8 +15,8 @@ import javax.validation.constraints.NotNull;
 @Data
 @AllArgsConstructor
 @FieldNameConstants
-@EqualsAndHashCode(callSuper = true)
-public class RegisterAccount extends BaseIdentityCommand<ResponseMessageOf<String>> {
+@EqualsAndHashCode(callSuper = false)
+public class RegisterAccount implements Command<ResponseMessageOf<RegisterResponse>> {
     @NotNull
     @NotBlank
     @NotEmpty
@@ -26,7 +25,12 @@ public class RegisterAccount extends BaseIdentityCommand<ResponseMessageOf<Strin
     @NotNull
     @NotBlank
     @NotEmpty
-    String fistName;
+    String username;
+
+    @NotNull
+    @NotBlank
+    @NotEmpty
+    String firstName;
 
     @NotNull
     @NotBlank
