@@ -6,10 +6,11 @@ import an.awesome.pipelinr.Pipeline;
 import com.phuoclong.api.features.share.services.AccountService;
 import com.phuoclong.api.infrastructure.Entitis.AccountEntity;
 import com.phuoclong.api.infrastructure.command.BaseIdentityCommand;
+import com.phuoclong.api.infrastructure.configurations.services.UserDetailsModelService;
+import com.phuoclong.api.infrastructure.repositories.AccountRepository;
 import com.phuoclong.api.infrastructure.response.ResponseMessage;
 import com.phuoclong.api.infrastructure.response.ResponseMessageOf;
 import com.phuoclong.api.infrastructure.services.AuthenticationManager;
-import io.jsonwebtoken.Jwt;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -22,6 +23,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 
 @RestController
@@ -38,17 +40,18 @@ public class BaseController {
 
     private static final Logger logger = LoggerFactory.getLogger(ErrorController.class);
 
-    protected String getAccountId(){
-        var token = (Jwt) this.authenticationManager.getAuthentication().getPrincipal();
-        return  null;
+    protected UUID getAccountId(){
+        var account =(UserDetailsModelService) authenticationManager.getAuthentication().getPrincipal();
+
+        return account.getId();
     }
 
     protected AccountEntity getAccountInfo(){
         var accountId = getAccountId();
 
-        return null;
-    }
+        return accountService.get(accountId);
 
+    }
 
 
     protected <T> ResponseEntity<T> handle(Command<T> command) {
@@ -58,14 +61,9 @@ public class BaseController {
             {
                 var account = getAccountInfo();
 
-//                if (
-//                        Boolean.TRUE.equals(
-//                                !isActiveUser( account, command instanceof IRequiredUserValidationCommand
-//                                        && ((IRequiredUserValidationCommand)command).isRequire())
-//                        )
-//                ) {
-//                    return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-//                }
+                if (account == null) {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+                }
 
                 ((BaseIdentityCommand<T>) command).setAccountId(account.getId());
             }
@@ -88,19 +86,11 @@ public class BaseController {
             {
                 var account = getAccountInfo();
 
-//                if (
-//                        Boolean.TRUE.equals(
-//                                !isActiveUser(
-//                                        account, command instanceof IRequiredUserValidationCommand
-//                                                && ((IRequiredUserValidationCommand)command).isRequire()
-//                                )
-//                        )
-//                ) {
-//                    return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-//                }
+                if (account == null) {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+                }
 
                 ((BaseIdentityCommand<ResponseMessageOf<T>>) command).setAccountId(account.getId());
-//                ((BaseIdentityCommand<ResponseMessageOf<T>>) command).setCompanyId(account.getActiveCompanyId());
             }
 
             var message= command.execute(pipeline);
@@ -126,24 +116,14 @@ public class BaseController {
     protected <T> ResponseEntity<T> handleWithResponse(Command<ResponseEntity<T>> command) {
         try {
 
-//            if(command instanceof BaseIdentityCommand<?>)
-//            {
-//                var account = getAccountInfo();
-//
-//                if (
-//                        Boolean.TRUE.equals(
-//                                !isActiveUser(
-//                                        account, command instanceof IRequiredUserValidationCommand
-//                                                && ((IRequiredUserValidationCommand)command).isRequire()
-//                                )
-//                        )
-//                ) {
-//                    return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
-//                }
-//
-//                ((BaseIdentityCommand<ResponseEntity<T>>) command).setAccountId(account.getId());
-//                ((BaseIdentityCommand<ResponseEntity<T>>) command).setCompanyId(account.getActiveCompanyId());
-//            }
+            if(command instanceof BaseIdentityCommand<?>)
+            {
+                var account = getAccountInfo();
+                if (account == null) {
+                    return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+                }
+                ((BaseIdentityCommand<ResponseEntity<T>>) command).setAccountId(account.getId());
+            }
 
             return command.execute(pipeline);
 

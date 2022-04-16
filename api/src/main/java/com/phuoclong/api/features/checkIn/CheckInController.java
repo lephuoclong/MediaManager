@@ -21,7 +21,6 @@ public class CheckInController extends BaseController {
     @GetMapping()
     public ResponseEntity<?> check(){
         var query = new CheckApi();
-        System.out.println("okkokokok");
         return handle(query);
     }
 }

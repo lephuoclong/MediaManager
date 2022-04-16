@@ -37,11 +37,11 @@ public class JwtUtils {
 
         Map<String, Object> claims = new HashMap<>();
         claims.put("accountId", accountEntity.get().getId().toString());
+        claims.put("sub", accountEntity.get().getUsername());
         claims.put("email", accountEntity.get().getEmail());
         claims.put("given_name", accountEntity.get().getFirstName());
         claims.put("family_name", accountEntity.get().getLastName());
         return Jwts.builder()
-                .setSubject(userPrincipal.getUsername())
                 .setIssuer(String.valueOf(new Date().getTime()))
                 .setClaims(claims)
                 .setExpiration(new Date((new Date()).getTime()+jwtExpirationMs))

@@ -3,6 +3,7 @@ package com.phuoclong.api.infrastructure.configurations.services.impl;
 import com.phuoclong.api.infrastructure.configurations.services.UserDetailsModelService;
 import com.phuoclong.api.infrastructure.configurations.services.UserDetailsService;
 import com.phuoclong.api.infrastructure.repositories.AccountRepository;
+import com.phuoclong.api.infrastructure.repositories.RoleAccountShareRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,7 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class DefaultUserDetailsService implements UserDetailsService {
 
-    AccountRepository accountRepository;
+    private final AccountRepository accountRepository;
+    private final RoleAccountShareRepository roleAccountShareRepository;
 
     @Override
     @Transactional
@@ -22,6 +24,7 @@ public class DefaultUserDetailsService implements UserDetailsService {
         var accountEntity = accountRepository.findByUsername(username)
                 .orElseThrow(()-> new UsernameNotFoundException("User Not Found with username: " + username));
 
-        return UserDetailsModelService.build(accountEntity);
+        var roles = roleAccountShareRepository.findAllByAccountId(accountEntity.getId());
+        return UserDetailsModelService.build(accountEntity, roles );
     }
 }

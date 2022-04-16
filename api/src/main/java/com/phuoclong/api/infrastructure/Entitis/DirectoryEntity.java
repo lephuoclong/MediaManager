@@ -24,18 +24,16 @@ public class DirectoryEntity extends BaseAudiEntity{
     @Type(type = "uuid-char")
     UUID id;
 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column( unique = true, nullable = false, insertable = false, updatable = false)
-    private Long flagParent;
-
     @Column(length = 50,nullable = false,columnDefinition = "nvarchar(50)")
     String name;
 
+    // 1: document 2: musics 3:photo 4: movies
     @Column(nullable = false, columnDefinition = "integer")
     Integer level = 0;
 
-    @Column(nullable = false, columnDefinition = "bigint")
-    Long parentId = 0L;
+    @Column(nullable = false)
+    @Type(type = "uuid-char")
+    UUID parentId;
 
     @Column(nullable = false)
     @Type(type = "uuid-char")

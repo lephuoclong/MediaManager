@@ -1,6 +1,7 @@
 package com.phuoclong.api.infrastructure.configurations.services;
 
 import com.phuoclong.api.infrastructure.Entitis.AccountEntity;
+import com.phuoclong.api.infrastructure.Entitis.RoleAccountShare;
 import com.phuoclong.api.infrastructure.repositories.RoleAccountShareRepository;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,8 +25,6 @@ public class UserDetailsModelService implements UserDetails {
     private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
-
-    static RoleAccountShareRepository roleAccountShareRepository;
     @Override
     public String getUsername() {
         return username;
@@ -65,13 +64,14 @@ public class UserDetailsModelService implements UserDetails {
         return Objects.equals(id, user.id);
     }
 
-    public static UserDetailsModelService build(AccountEntity accountEntity) {
+    public static UserDetailsModelService build(AccountEntity accountEntity, Collection<RoleAccountShare> roles) {
 
-        var roles =roleAccountShareRepository.findAllByAccountId(accountEntity.getId());
+
 
         List<GrantedAuthority> authorities = roles.stream()
                 .map(role -> new SimpleGrantedAuthority(role.getRole()))
                 .collect(Collectors.toList());
+
         return new UserDetailsModelService(
                 accountEntity.getId(),
                 accountEntity.getUsername(),
