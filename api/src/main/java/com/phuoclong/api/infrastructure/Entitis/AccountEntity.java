@@ -16,8 +16,8 @@ import java.util.UUID;
         @UniqueConstraint(columnNames = "email")
 },indexes = {
         @Index(name = "IX_ACCOUNT_EMAIL", columnList = "email", unique = true),
-        @Index(name = "IX_ACCOUNT_FIRSTNAME", columnList = "firstName", unique = true),
-        @Index(name = "IX_ACCOUNT_LASTNAME", columnList = "lastName", unique = true)
+        @Index(name = "IX_ACCOUNT_FIRSTNAME", columnList = "firstName"),
+        @Index(name = "IX_ACCOUNT_LASTNAME", columnList = "lastName")
 
 })
 @AllArgsConstructor(staticName = "of")

@@ -41,6 +41,12 @@ public class LoginAccountHandler implements Command.Handler<LoginAccount, Respon
 
             var jwt = jwtUtils.generateJwtToken(authentication);
 
+            if (accountLogin.get().getStatus() == 0){
+                var activateAccount = accountLogin.get();
+                activateAccount.setStatus(1);
+                accountRepository.saveAndFlush(activateAccount);
+            }
+
             return ResponseMessageOf.of(HttpStatus.OK,"Login successfully",
                     Map.of(LoginAccount.Fields.username, "Login successfully"), LoginResponse.of(jwt));
         }

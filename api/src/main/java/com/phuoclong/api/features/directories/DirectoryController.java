@@ -3,6 +3,7 @@ package com.phuoclong.api.features.directories;
 import an.awesome.pipelinr.Pipeline;
 import com.phuoclong.api.features.directories.commands.CreateDirectory;
 import com.phuoclong.api.features.directories.commands.UpdateDirectory;
+import com.phuoclong.api.features.directories.queries.GetListDirectory;
 import com.phuoclong.api.features.share.services.AccountService;
 import com.phuoclong.api.infrastructure.controllers.BaseController;
 import com.phuoclong.api.infrastructure.services.AuthenticationManager;
@@ -20,13 +21,23 @@ public class DirectoryController extends BaseController {
     }
 
     @PostMapping()
-    public ResponseEntity<?> createDirectory(@Valid @RequestBody CreateDirectory command){
+    public ResponseEntity<?> createDirectory(@Valid @RequestBody CreateDirectory command) {
         return handleWithResponseMessage(command);
     }
 
     @PutMapping("/{directoryId}")
-    public ResponseEntity<?> updateDirectory(@Valid @RequestBody UpdateDirectory command, @PathVariable UUID directoryId){
+    public ResponseEntity<?> updateDirectory(@Valid @RequestBody UpdateDirectory command, @PathVariable UUID directoryId) {
         command.setDirectoryId(directoryId);
         return handleWithResponseMessage(command);
+    }
+
+    @GetMapping("/{parentId}")
+    public ResponseEntity<?> getListDirectoryByParentId(@Valid @PathVariable UUID parentId,
+                                                        @RequestParam Integer page,
+                                                        @RequestParam Integer pageSize) {
+        var query = GetListDirectory.of(parentId);
+        query.setPage(page);
+        query.setPageSize(pageSize);
+        return handleWithResponse(query);
     }
 }

@@ -41,4 +41,9 @@ public class RegisterAccount implements Command<ResponseMessageOf<RegisterRespon
     @NotBlank
     @NotEmpty
     String password;
+
+    @NotNull
+    @NotBlank
+    @NotEmpty
+    String confirmPassword;
 }

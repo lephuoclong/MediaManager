@@ -3,6 +3,7 @@ package com.phuoclong.api.infrastructure.controllers;
 
 import an.awesome.pipelinr.Command;
 import an.awesome.pipelinr.Pipeline;
+import com.auth0.jwt.JWT;
 import com.phuoclong.api.features.share.services.AccountService;
 import com.phuoclong.api.infrastructure.Entitis.AccountEntity;
 import com.phuoclong.api.infrastructure.command.BaseIdentityCommand;
@@ -11,6 +12,8 @@ import com.phuoclong.api.infrastructure.repositories.AccountRepository;
 import com.phuoclong.api.infrastructure.response.ResponseMessage;
 import com.phuoclong.api.infrastructure.response.ResponseMessageOf;
 import com.phuoclong.api.infrastructure.services.AuthenticationManager;
+import io.jsonwebtoken.Jwt;
+import io.jsonwebtoken.Jwts;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

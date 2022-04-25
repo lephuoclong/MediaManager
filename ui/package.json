@@ -13,6 +13,7 @@
     "@testing-library/user-event": "^13.5.0",
     "@uifabric/file-type-icons": "^7.8.5",
     "axios": "^0.26.0",
+    "dotenv": "^16.0.0",
     "prop-types": "^15.8.1",
     "query-string": "^7.1.1",
     "react": "^17.0.2",

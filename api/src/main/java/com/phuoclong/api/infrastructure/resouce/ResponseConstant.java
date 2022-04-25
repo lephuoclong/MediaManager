@@ -6,5 +6,6 @@ public class ResponseConstant {
     public static final String NOTFOUND_DIRECTORY ="The directory is not exists!";
     public static final String UPDATE_DIRECTORY_SUCCESS ="Update the directory is successfully!";
     public static final String UPDATE_DIRECTORY_FAILED ="Update the directory is failed!";
+    public static final String ACCOUNT_NOT_ACTIVE="Account not activated!";
 
 }

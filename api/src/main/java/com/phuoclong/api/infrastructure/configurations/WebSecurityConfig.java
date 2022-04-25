@@ -1,8 +1,12 @@
 package com.phuoclong.api.infrastructure.configurations;
 
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -17,8 +21,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import java.util.Collections;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -55,23 +63,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        var source = new UrlBasedCorsConfigurationSource();
-        var crossConfig = new CorsConfiguration();
-        crossConfig.setAllowedOrigins(Collections.singletonList("*"));
-        crossConfig.setAllowedMethods(Collections.singletonList("*"));
-        source.registerCorsConfiguration("/**", crossConfig);
-        return source;
-    }
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf()
                 .disable()
                 .cors().and()
                 .authorizeRequests(authz -> authz
-                        .antMatchers("/auth/**","/check-in").permitAll()
+                        .antMatchers("/auth/**").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()

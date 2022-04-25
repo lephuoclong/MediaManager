@@ -3,11 +3,8 @@
 import { Nav, Stack } from "@fluentui/react";
 import React from "react";
 import { Route, Routes } from "react-router-dom";
-import { LIGHT_THEME, PAGE_PATHS } from "../../constants";
-import Favorites from "./Favorites";
-import Garbage from "./Garbage";
-import MyFolder from "./MyFolder";
-import ShareWithMe from "./ShareWithMe";
+import { LIGHT_THEME, NAV_GROUPS } from "../../constants";
+import ContentArea from "./Components/ContentArea";
 
 const navStyles = {
   root: {
@@ -24,44 +21,18 @@ const contentArea = {
   },
 };
 
-const navGroups = [
-  {
-    key: "my-folder",
-    name: "My Folder",
-    url: `/${PAGE_PATHS.MY_FOLDER}`,
-    icon: "FabricUserFolder",
-  },
-  {
-    key: "share-with-me",
-    name: "Share with me",
-    url: `/${PAGE_PATHS.SHARE_WITH_ME}`,
-    icon: "Share",
-  },
-  {
-    key: "favorites",
-    name: "Favorites",
-    url: `/${PAGE_PATHS.FAVORITES}`,
-    icon: "FavoriteStar",
-  },
-  {
-    key: "garbage",
-    name: "Garbage",
-    url: `/${PAGE_PATHS.GARBAGE}`,
-    icon: "RecycleBin",
-  },
-];
-
 export default function Contents() {
   return (
     <Stack horizontal styles={{ root: { height: "100%" } }}>
-      <Nav styles={navStyles} groups={[{ links: navGroups }]} />
+      <Nav styles={navStyles} groups={[{ links: NAV_GROUPS }]} />
       <Stack styles={contentArea}>
         <Routes>
-          <Route exact path='/' element={<MyFolder />} />
-          <Route path='/my-folder' element={<MyFolder />} />
+          <Route exact path='/' element={<ContentArea />} />
+          <Route path='/:pathPage' element={<ContentArea />} />
+          {/* <Route path='/my-folder' element={<MyFolder />} />
           <Route path='/share-with-me' element={<ShareWithMe />} />
           <Route path='/favorites' element={<Favorites />} />
-          <Route path='/garbage' element={<Garbage />} />
+          <Route path='/garbage' element={<Garbage />} /> */}
         </Routes>
       </Stack>
     </Stack>
