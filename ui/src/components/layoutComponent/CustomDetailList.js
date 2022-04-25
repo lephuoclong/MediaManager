@@ -1,6 +1,12 @@
 /** @format */
 
-import { mergeStyleSets, Stack, Text } from "@fluentui/react";
+import {
+  mergeStyleSets,
+  SelectionMode,
+  ShimmeredDetailsList,
+  Stack,
+  Text,
+} from "@fluentui/react";
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { LIGHT_THEME, ROWS_PER_PAGE } from "../../constants";
@@ -37,12 +43,21 @@ const classNames = mergeStyleSets({
 
 export default function CustomDetailList(props) {
   const [selectionDetails, setSelectionDetails] = useState();
-  const { title, isSelectionDetails, isPagination, pagingOptions } = props;
+  const {
+    title,
+    isSelectionDetails,
+    isPagination,
+    pagingOptions,
+    items,
+    columns,
+  } = props;
 
-  const baseDetailList = isSelectionDetails ? (
-    <>selectionDetails</>
-  ) : (
-    <>no selectionDetails</>
+  const baseDetailList = (
+    <ShimmeredDetailsList
+      items={items}
+      columns={columns}
+      selectionMode={SelectionMode.none}
+    />
   );
 
   return (
@@ -53,15 +68,14 @@ export default function CustomDetailList(props) {
         </Text>
       )}
       {isSelectionDetails && <Text>{selectionDetails}</Text>}
-      <div className={classNames.listWrapper}>
-        {/* style={{ height: maxHeight }} */}
-        {baseDetailList}
-      </div>
+      <div className={classNames.listWrapper}>{baseDetailList}</div>
       {isPagination ? <CustomPagination {...pagingOptions} /> : null}
     </Stack>
   );
 }
 CustomDetailList.propTypes = {
+  items: PropTypes.arrayOf(PropTypes.object).isRequired,
+  columns: PropTypes.arrayOf(PropTypes.object).isRequired,
   title: PropTypes.string,
   isSelectionDetails: PropTypes.bool,
   isPagination: PropTypes.bool,
@@ -75,6 +89,6 @@ CustomDetailList.propTypes = {
 CustomDetailList.defaultProps = {
   title: undefined,
   isSelectionDetails: false,
-  isPagination: true,
+  isPagination: false,
   pagingOptions: undefined,
 };
