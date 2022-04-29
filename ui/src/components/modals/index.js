@@ -40,6 +40,9 @@ const bodyModalStyles = {
   },
 };
 
+const bottomModelStyle = {
+  root: { margin: 20 },
+};
 export default function CustomModal(props) {
   const {
     title,
@@ -69,9 +72,13 @@ export default function CustomModal(props) {
       {(footerLeft ||
         (primaryButtonText && onPrimaryButtonClick) ||
         primaryButtonProps) && (
-        <Stack horizontal horizontalAlign='end'>
+        <Stack horizontal horizontalAlign='end' styles={bottomModelStyle}>
           <Stack.Item grow={1}>{footerLeft}</Stack.Item>
-          <Stack grow={1} horizontal horizontalAlign='end'>
+          <Stack
+            grow={1}
+            horizontal
+            horizontalAlign='end'
+            tokens={{ childrenGap: 8 }}>
             {isSubmitting ? <Spinner size={SpinnerSize.medium} /> : null}
             <PrimaryButton text='Cancel' onClick={onDismiss} />
             <PrimaryButton

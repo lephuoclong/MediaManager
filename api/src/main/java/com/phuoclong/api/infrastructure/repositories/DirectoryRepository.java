@@ -14,5 +14,5 @@ public interface DirectoryRepository extends JpaRepository<DirectoryEntity, UUID
 
     Optional<DirectoryEntity> findByIdAndLevel(UUID parentId, Integer level);
 
-    Page<DirectoryEntity> findAllDirectoriesByParentId(UUID parentId, Pageable pageable);
+    Page<DirectoryEntity> findAllDirectoriesByParentIdAndAccountId(UUID parentId,UUID accountId, Pageable pageable);
 }

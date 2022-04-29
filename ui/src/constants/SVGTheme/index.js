@@ -9,6 +9,9 @@ export const SGV_REGISTER = {
     "plus-svg": SVGFiles.plus,
     "folder-svg": SVGFiles.folder,
     "more-svg": SVGFiles.more,
+    "upload-file-svg": SVGFiles.uploadFile,
+    "doc-svg": SVGFiles.doc,
+    "close-svg": SVGFiles.close,
   },
 };
 

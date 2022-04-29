@@ -23,7 +23,7 @@ public class GetListDirectoryHandler implements Command.Handler<GetListDirectory
 
         Pageable pageable = PageRequest.of(query.getPage(), query.getPageSize(), Sort.by(Sort.Direction.DESC, "id"));
 
-        var directories = directoryRepository.findAllDirectoriesByParentId(query.getParentId(), pageable);
+        var directories = directoryRepository.findAllDirectoriesByParentIdAndAccountId(query.getParentId(),query.getAccountId(), pageable);
 
         if(directories.isEmpty()){
             return ResponseEntity.noContent().build();

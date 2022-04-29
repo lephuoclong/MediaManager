@@ -165,10 +165,12 @@ export default function ContentFolder(props) {
                   isPagination
                   pagingOptions={{
                     ...pagination,
-                    onChangePageIndex: page =>
-                      setPagination({ ...pagination, page }),
+                    onChangePageIndex: page => _handleChangePageIndex(page),
+                    // onChangePageIndex: page =>
+                    //   setPagination({ ...pagination, page }),
                     onChangePageSize: pageSize =>
-                      setPagination({ ...pagination, pageSize, page: 0 }),
+                      _handleChangePageSize(pageSize),
+                    //   setPagination({ ...pagination, pageSize, page: 0 }),
                   }}
                 />
               ) : null}

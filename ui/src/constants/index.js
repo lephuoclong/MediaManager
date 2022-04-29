@@ -59,6 +59,7 @@ export const PAGE_PATHS = {
 export const MODEL_NAME = {
   SEARCH_HEADER_MODEL: "SEARCH_HEADER_MODEL",
   ADD_CONTENT_TO_DOC_FOLDER: "ADD_CONTENT_TO_DOC_FOLDER",
+  LIST_FILES: "LIST_FILES",
 };
 export const ROWS_PER_PAGE = {
   FIVE: 5,
@@ -105,6 +106,13 @@ export const NAV_GROUPS = [
     url: `/${PAGE_PATHS.GARBAGE}`,
     icon: "RecycleBin",
   },
+];
+
+export const TYPE_FILE = [
+  { key: "document", name: "document", type: "pdf", iconName: "doc-svg" },
+  { key: "music", name: "music", type: "mp3", iconName: "mp3-svg" },
+  { key: "photo", name: "photo", type: "png", iconName: "pic-svg" },
+  { key: "movie", name: "movie", type: "mp4", iconName: "mov-svg" },
 ];
 
 export const ROOT_FOLDER_ID = "572eec8a-bd43-11ec-9d64-0242ac120002";

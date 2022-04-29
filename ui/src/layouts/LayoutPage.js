@@ -26,7 +26,7 @@ export default function LayoutPage() {
               <Route path='/setting' element={<Setting />} />
               <Route path='/data-room' element={<DataRoom />} />
               <Route path='/dashboard' element={<DashBoard />} />
-              <Route path='/contents' element={<Contents />} />
+              <Route path='/contents/*' element={<Contents />} />
               <Route path='*' element={<Contents />} />
             </Routes>
           </AppLayout>
