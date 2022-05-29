@@ -22,5 +22,10 @@ class DirectoryApi {
     const url = `directories/deleted/${directoryId}`;
     return AxiosPort.delete(url);
   };
+
+  addToFavorite = data => {
+    const url = `directories/add-favorite`;
+    return AxiosPort.post(url, data);
+  };
 }
 export default new DirectoryApi();

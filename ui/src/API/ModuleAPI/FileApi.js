@@ -17,6 +17,11 @@ class FileApi {
     const url = `files/delete/${id}`;
     return AxiosPort.delete(url);
   };
+
+  addToFavorite = data => {
+    const url = `files/add-favorite`;
+    return AxiosPort.post(url, data);
+  };
 }
 
 export default new FileApi();

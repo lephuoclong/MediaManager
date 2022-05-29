@@ -6,6 +6,7 @@ import FileBiz from "../../../biz/FileBiz";
 import CustomIconButton from "../../../components/CustomIconButton";
 import { PAGE_PATHS, TYPE_FILE } from "../../../constants";
 import { success } from "../../../components/ToastMessage";
+import CustomText from "../../../components/CustomText";
 
 const classNames = mergeStyleSets({
   listWrapper: {
@@ -74,15 +75,40 @@ const _onDeleteFile = async (row, refreshFile) => {
     success("Delete file successfully");
     refreshFile();
   }
-  console.log("delete ", deleteFileResponse);
+};
+
+const _onShareFile = row => {
+  // TODO: handle add file to share
+};
+
+const _onAddFavorite = async row => {
+  const data = { fileId: row?.id };
+  const addFavoriteResult = await FileApi.addToFavorite(data);
+  if (addFavoriteResult.isAxiosError) {
+    window.alert(addFavoriteResult.response.data.message, {
+      title: "Add to favorite failed",
+    });
+  } else {
+    success("Add to favorite successfully");
+  }
 };
 
 const _getFileMenuProps = (row, refreshFile) => {
   const result = {
     items: [
       {
+        key: "share-folder",
+        text: "Share this file",
+        onClick: () => _onShareFile(row),
+      },
+      {
+        key: "add-to-favorite",
+        text: "Add to Favorite",
+        onClick: () => _onAddFavorite(row),
+      },
+      {
         key: "delete",
-        text: "Delete",
+        text: <CustomText color='textDanger'>Delete File</CustomText>,
         onClick: () => _onDeleteFile(row, refreshFile),
       },
     ],

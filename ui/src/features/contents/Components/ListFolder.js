@@ -119,7 +119,7 @@ export default function ListFolder(props) {
       {folders?.length > 0 ? (
         <CustomDetailList
           items={folders}
-          columns={folderColumnSchema("folder-svg", selectFolder)}
+          columns={folderColumnSchema("folder-svg", selectFolder, _getFolders)}
           isPagination
           pagingOptions={{
             ...pagination,

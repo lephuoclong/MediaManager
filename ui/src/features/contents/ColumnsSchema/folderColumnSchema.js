@@ -1,7 +1,10 @@
 /** @format */
 
 import { Icon, Link, mergeStyleSets, Stack } from "@fluentui/react";
+import DirectoryApi from "../../../API/ModuleAPI/DirectoryApi";
 import CustomIconButton from "../../../components/CustomIconButton";
+import CustomText from "../../../components/CustomText";
+import { success } from "../../../components/ToastMessage";
 
 const renderNameColumn = (item, iconName, selectFolder) => (
   <Stack horizontal verticalAlign='center'>
@@ -34,18 +37,53 @@ const classNames = mergeStyleSets({
   },
 });
 
-const _onDeleteFolder = row => {
-  //TODO: delete folder
-  console.log("delete ", row);
+const _onDeleteFolder = async (row, refreshFolders) => {
+  const { id } = row;
+  const deleteFolderResult = await DirectoryApi.deleteDirectory(id);
+
+  if (deleteFolderResult.isAxiosError) {
+    window.alert(deleteFolderResult.response.data.message, {
+      title: "Delete folder failed",
+    });
+  } else {
+    success("Delete folder successfully");
+    refreshFolders();
+  }
 };
 
-const _getFolderMenuProps = row => {
+const _onAddFavorite = async row => {
+  const data = { directoryId: row?.id };
+  const addFavoriteResult = await DirectoryApi.addToFavorite(data);
+  if (addFavoriteResult.isAxiosError) {
+    window.alert(addFavoriteResult.response.data.message, {
+      title: "Add to favorite failed",
+    });
+  } else {
+    success("Add to favorite successfully");
+  }
+};
+
+const _onShareFolder = row => {
+  // TODO: handle share folder
+};
+
+const _getFolderMenuProps = (row, refreshFolders) => {
   const result = {
     items: [
       {
+        key: "share-folder",
+        text: "Share this folder",
+        onClick: () => _onShareFolder(row),
+      },
+      {
+        key: "add-to-favorite",
+        text: "Add to Favorite",
+        onClick: () => _onAddFavorite(row),
+      },
+      {
         key: "delete",
-        text: "Delete",
-        onClick: () => _onDeleteFolder(row),
+        text: <CustomText color='textDanger'>Delete Folder</CustomText>,
+        onClick: () => _onDeleteFolder(row, refreshFolders),
       },
     ],
     directionalHint: 6,
@@ -53,7 +91,7 @@ const _getFolderMenuProps = row => {
   return result;
 };
 
-const _renderActionsBtn = item => {
+const _renderActionsBtn = (item, refreshFolders) => {
   return (
     <CustomIconButton
       className='action-btn-overlay'
@@ -67,12 +105,12 @@ const _renderActionsBtn = item => {
       menuIconProps={{ iconName: "more-svg" }}
       title='Actions'
       ariaLabel='Actions'
-      menuProps={_getFolderMenuProps(item)}
+      menuProps={_getFolderMenuProps(item, refreshFolders)}
     />
   );
 };
 
-const folderColumnSchema = (iconName, selectFolder) => [
+const folderColumnSchema = (iconName, selectFolder, refreshFolders) => [
   {
     key: "name",
     name: "name",
@@ -89,7 +127,7 @@ const folderColumnSchema = (iconName, selectFolder) => [
     fieldName: "actions",
     minWidth: 35,
     className: classNames.cellAction,
-    onRender: item => _renderActionsBtn(item),
+    onRender: item => _renderActionsBtn(item, refreshFolders),
   },
 ];
 
