@@ -55,10 +55,15 @@ export const PAGE_PATHS = {
   SHARE_WITH_ME: "share-with-me",
   FAVORITES: "favorites",
   GARBAGE: "garbage",
+  VIEW_FILE: "view-file",
+  PROFILE: "profile",
+  SEARCH: "search",
 };
 export const MODEL_NAME = {
   SEARCH_HEADER_MODEL: "SEARCH_HEADER_MODEL",
   ADD_CONTENT_TO_DOC_FOLDER: "ADD_CONTENT_TO_DOC_FOLDER",
+  ADD_FOLDER_TO_DOC_FOLDER: "ADD_FOLDER_TO_DOC_FOLDER",
+  ADD_FILE_TO_DOC_FOLDER: "ADD_FILE_TO_DOC_FOLDER",
   LIST_FILES: "LIST_FILES",
 };
 export const ROWS_PER_PAGE = {
@@ -109,10 +114,27 @@ export const NAV_GROUPS = [
 ];
 
 export const TYPE_FILE = [
-  { key: "document", name: "document", type: "pdf", iconName: "doc-svg" },
-  { key: "music", name: "music", type: "mp3", iconName: "mp3-svg" },
-  { key: "photo", name: "photo", type: "png", iconName: "pic-svg" },
-  { key: "movie", name: "movie", type: "mp4", iconName: "mov-svg" },
+  {
+    key: "document",
+    name: "document",
+    type: "application/pdf",
+    iconName: "doc-svg",
+  },
+  { key: "music", name: "music", type: "audio/mpeg", iconName: "mp3-svg" },
+  { key: "photo", name: "photo", type: "image/jpeg", iconName: "pic-svg" },
+  { key: "movie", name: "movie", type: "video/mp4", iconName: "mov-svg" },
 ];
 
+export const UPLOAD_FILE_STATUS = {
+  READY_TO_UPLOAD: 0,
+  IN_UPLOAD_PROCESS: 1,
+  UPLOAD_SUCCESS: 2,
+  UPLOAD_ERROR: 3,
+};
+
 export const ROOT_FOLDER_ID = "572eec8a-bd43-11ec-9d64-0242ac120002";
+
+export const ANOTHER_VALUE = {
+  MAX_NUMBER_FILE_UPLOAD: 10,
+  MAX_SIZE_FILE_UPLOAD: 104857600, // 100MB
+};

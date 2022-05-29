@@ -2,7 +2,8 @@
 
 import React from "react";
 import PropTypes from "prop-types";
-import { ThemeContext, Text } from "@fluentui/react";
+import { Text } from "@fluentui/react";
+import { LIGHT_THEME } from "../../constants";
 
 export default function CustomText(props) {
   const { children, styles, color } = props;
@@ -24,22 +25,18 @@ export default function CustomText(props) {
   };
 
   return (
-    <ThemeContext.Consumer>
-      {theme => (
-        <Text
-          {...props}
-          styles={{
-            ...styles,
-            root: {
-              color: _getTextColor(theme),
-              overflow: "hidden",
-              ...(styles && styles.root),
-            },
-          }}>
-          {children}
-        </Text>
-      )}
-    </ThemeContext.Consumer>
+    <Text
+      {...props}
+      styles={{
+        ...styles,
+        root: {
+          color: _getTextColor(LIGHT_THEME),
+          overflow: "hidden",
+          ...(styles && styles.root),
+        },
+      }}>
+      {children}
+    </Text>
   );
 }
 CustomText.propTypes = {

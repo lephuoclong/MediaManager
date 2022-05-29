@@ -130,6 +130,7 @@ export default function Header(props) {
             title='Search'>
             <SearchBox
               placeholder='Search'
+              // TODO: handle search box
               onSearch={newValue => console.log("value is " + newValue)}
             />
           </CustomModal>

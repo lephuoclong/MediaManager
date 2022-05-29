@@ -9,12 +9,18 @@ class DirectoryApi {
   };
 
   getFolderTreeByFolderId(selectFolderId) {
-    // const url = `directories/${selectFolderId}`
+    const url = `directories/folder-tree/${selectFolderId}`;
+    return AxiosPort.get(url);
   }
 
   createFolder = data => {
     const url = `directories`;
     return AxiosPort.post(url, data);
+  };
+
+  deleteDirectory = directoryId => {
+    const url = `directories/deleted/${directoryId}`;
+    return AxiosPort.delete(url);
   };
 }
 export default new DirectoryApi();

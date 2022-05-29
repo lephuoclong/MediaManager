@@ -69,5 +69,5 @@ AlertComponent.defaultProps = {
   actionText: "OK",
   content: undefined,
   hideFooter: false,
-  onAction: undefined,
+  onAction: () => true,
 };

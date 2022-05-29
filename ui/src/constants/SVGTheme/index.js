@@ -12,6 +12,12 @@ export const SGV_REGISTER = {
     "upload-file-svg": SVGFiles.uploadFile,
     "doc-svg": SVGFiles.doc,
     "close-svg": SVGFiles.close,
+    "pic-svg": SVGFiles.pic,
+    "mp3-svg": SVGFiles.mp3,
+    "mov-svg": SVGFiles.mov,
+    "chevron-right-svg": SVGFiles.chevronRight,
+    "error-toast-svg": SVGFiles.errorToast,
+    "success-toast-svg": SVGFiles.successToast,
   },
 };
 

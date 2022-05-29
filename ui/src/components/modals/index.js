@@ -49,6 +49,7 @@ export default function CustomModal(props) {
     isOpen,
     children,
     onDismiss,
+    cancelButtonProps,
     primaryButtonText,
     primaryButtonProps,
     footerLeft,
@@ -80,10 +81,15 @@ export default function CustomModal(props) {
             horizontalAlign='end'
             tokens={{ childrenGap: 8 }}>
             {isSubmitting ? <Spinner size={SpinnerSize.medium} /> : null}
-            <PrimaryButton text='Cancel' onClick={onDismiss} />
+            <PrimaryButton
+              text='Cancel'
+              onClick={onDismiss}
+              {...cancelButtonProps}
+            />
             <PrimaryButton
               text={primaryButtonText}
               onClick={onPrimaryButtonClick}
+              {...primaryButtonProps}
             />
           </Stack>
         </Stack>
@@ -93,7 +99,23 @@ export default function CustomModal(props) {
 }
 CustomModal.propTypes = {
   title: PropTypes.string,
-  isOpen: PropTypes.bool,
-  onDismiss: PropTypes.func,
+  isOpen: PropTypes.bool.isRequired,
+  onDismiss: PropTypes.func.isRequired,
+  footerLeft: PropTypes.node,
   onPrimaryButtonClick: PropTypes.func,
+  primaryButtonText: PropTypes.string,
+  isSubmitting: PropTypes.bool,
+  modalProps: PropTypes.oneOfType([PropTypes.object]),
+  primaryButtonProps: PropTypes.oneOfType([PropTypes.object]),
+  cancelButtonProps: PropTypes.oneOfType([PropTypes.object]),
+};
+CustomModal.defaultProps = {
+  title: "",
+  primaryButtonText: "OK",
+  footerLeft: undefined,
+  onPrimaryButtonClick: undefined,
+  cancelButtonProps: undefined,
+  isSubmitting: false,
+  primaryButtonProps: undefined,
+  modalProps: undefined,
 };

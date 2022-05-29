@@ -1,6 +1,6 @@
 /** @format */
 
-import { Icon, Pivot, PivotItem, Stack, Text } from "@fluentui/react";
+import { Pivot, PivotItem, Stack, Text } from "@fluentui/react";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
@@ -63,7 +63,7 @@ export default function ContentArea() {
   const [isLoading, setIsLoading] = useState(true);
   const [pagination, setPagination] = useState({
     page: 0,
-    totalPages: 0,
+    totalPages: 1,
     pageSize: ROWS_PER_PAGE.TEN,
   });
 

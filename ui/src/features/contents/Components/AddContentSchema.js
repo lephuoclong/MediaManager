@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import {
   Stack,
@@ -14,7 +14,18 @@ import {
 import CustomButton from "../../../components/CustomButton";
 import DirectoryApi from "../../../API/ModuleAPI/DirectoryApi";
 import CustomModal from "../../../components/modals";
-import { MODEL_NAME, TYPE_FILE } from "../../../constants";
+import {
+  ANOTHER_VALUE,
+  LIGHT_THEME,
+  MODEL_NAME,
+  TYPE_FILE,
+  UPLOAD_FILE_STATUS,
+} from "../../../constants";
+import FileApi from "../../../API/ModuleAPI/FileApi";
+import UploadFileItem from "./UploadFileItem";
+import { error, success } from "../../../components/ToastMessage";
+import successToast from "../../../constants/SVGTheme/svg/successToast";
+import FileBiz from "../../../biz/FileBiz";
 
 const classNames = mergeStyleSets({
   fileInput: {
@@ -59,36 +70,16 @@ const btnSelectFile = {
   },
 };
 
-const iconFilesStyle = {
-  root: {
-    width: 36,
-    height: 36,
-  },
-  height: "100%",
-};
-
-const listFileStyles = {
-  root: {
-    marginTop: 10,
-    marginBottom: 10,
-  },
-};
-
-const fileNameStyle = {
-  root: {
-    width: "100%",
-    maxWidth: 300,
-    paddingLeft: 10,
-    lineHeight: 35,
-  },
-};
-
 export default function AddContentSchema(props) {
   const [options, setOption] = useState(true);
-  const { directoryId, onDismiss, fileType, refreshDirectory } = props;
   const [folderName, setFolderName] = useState("");
-  const [filesUpload, setFilesUpload] = useState([]);
+  const [filesUploadInfo, setFilesUploadInfo] = useState([]);
+  const [objFiles, setObjFiles] = useState([]);
   const [modalName, setModalName] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [flagUploadFile, setFlagUploadFile] = useState(undefined);
+
+  const { directoryId, onDismiss, fileType, refresh } = props;
 
   const _submitContent = async () => {
     const data = {
@@ -104,13 +95,13 @@ export default function AddContentSchema(props) {
         title: `Error Create Directory!`,
       });
     } else {
-      refreshDirectory();
+      refresh();
       _handelDismiss();
     }
   };
 
   const _handelDismiss = () => {
-    setFilesUpload([]);
+    setFilesUploadInfo([]);
     onDismiss();
   };
 
@@ -139,67 +130,70 @@ export default function AddContentSchema(props) {
   };
 
   const _toggleModalListFiles = (modalName = "") => {
-    setFolderName([]);
+    if (typeof modalName === "object") {
+      _handelDismiss();
+    }
     setModalName(modalName);
   };
 
   const _onChangeFile = value => {
     const objFiles = value.target.files;
     if (objFiles) {
-      if (objFiles?.length < 10) {
-        let count = 0;
-        for (let index = 0; index < objFiles.length; index++) {
-          if (objFiles[index].size > 5242880) {
-            count++;
+      if (objFiles?.length < ANOTHER_VALUE.MAX_NUMBER_FILE_UPLOAD) {
+        setObjFiles(objFiles);
+        let arr = [];
+        let errorContinue = 0;
+        Array.from(objFiles).map((file, key) => {
+          if (file.size > ANOTHER_VALUE.MAX_SIZE_FILE_UPLOAD) {
+            errorContinue = 1;
           }
-        }
-
-        if (count === 0) {
-          let arr = [];
-          Array.from(value.target.files).map((file, key) => {
+          if (FileBiz.checkTypeOfFileSuccess(file) === false) {
+            errorContinue = 2;
+          }
+          if (errorContinue === 0) {
             arr.push({
               name: file.name,
               url: URL.createObjectURL(file),
-              id: key,
-              type: file.type.replace("application/", ""),
-              deleted: false,
+              index: key,
+              type: file.type,
+              uploading: UPLOAD_FILE_STATUS.READY_TO_UPLOAD,
             });
-            return 1;
-          });
-
-          console.log("list file ", arr);
-          setFilesUpload(arr);
-          // this.setState({
-          //   selectSupImgUpload: arr2,
-          //   supImageUrls: arr,
-          //   supImageUpload: value.target.files,
-          // });
-          // let supArr = this.state.supImage;
-          // supArr.map(sup => {
-          //   sup.deleted = 1;
-          //   return 1;
-          // });
-          // this.setState({ supImage: supArr });
+          }
+          return 1;
+        });
+        if (errorContinue === 0) {
+          setFilesUploadInfo(arr);
+          _toggleModalListFiles(MODEL_NAME.LIST_FILES);
+        } else if (errorContinue === 1) {
+          error("File upload size  must be smaller than 100MB");
         } else {
-          this.showUpdateNotify(false, "Hình upload phải nhỏ hơn 5MB");
+          error("File upload Type incorrect");
         }
       } else {
-        this.showUpdateNotify(false, "Hình ảnh phụ phải ít hơn 10 hình");
+        error("Maximum upload 10 files only");
       }
     }
-
-    _toggleModalListFiles(MODEL_NAME.LIST_FILES);
   };
 
   const _removeThisItem = item => {
-    if (filesUpload.length === 1) {
+    if (filesUploadInfo.length === 1) {
       _toggleModalListFiles();
     }
-    setFilesUpload(filesUpload.filter(i => i !== item));
+    setFilesUploadInfo(filesUploadInfo.filter(i => i !== item));
   };
 
   const _submitFile = () => {
-    console.log("list ", filesUpload);
+    setFlagUploadFile(0);
+    setIsSubmitting(true);
+  };
+
+  const _uploadNextFile = value => {
+    if (value === filesUploadInfo.length) {
+      setIsSubmitting(false);
+      success("Done");
+    } else {
+      setFlagUploadFile(value);
+    }
   };
 
   return (
@@ -240,43 +234,36 @@ export default function AddContentSchema(props) {
       </Stack>
       <Stack horizontal horizontalAlign='space-between'>
         <CustomButton text='Cancel' onClick={_handelDismiss} />
-        <CustomButton primary text='Add Content' onClick={_submitContent} />
+        <CustomButton
+          primary
+          text='Add Content'
+          onClick={_submitContent}
+          disabled={!options && filesUploadInfo.length === 0}
+        />
       </Stack>
       <CustomModal
         title='List File'
         isOpen={modalName === MODEL_NAME.LIST_FILES}
         onDismiss={_toggleModalListFiles}
         primaryButtonText='Upload File'
-        onPrimaryButtonClick={_submitFile}
-        primaryButtonProps>
-        {filesUpload &&
-          filesUpload.map((file, key) => {
-            return (
-              <Stack
-                horizontal
-                horizontalAlign='space-between'
-                key={key}
-                styles={listFileStyles}>
-                <Icon
-                  iconName={
-                    TYPE_FILE.filter(i => i.type === file.type)[0].iconName
-                  }
-                  styles={iconFilesStyle}
-                />
-                <Text variant='xLarge' nowrap styles={fileNameStyle}>
-                  {file.name}
-                </Text>
-
-                <IconButton
-                  iconProps={{
-                    iconName: "close-svg",
-                    styles: { icon: { height: "100%" } },
-                  }}
-                  onClick={() => _removeThisItem(file)}
-                />
-              </Stack>
-            );
-          })}
+        isSubmitting={isSubmitting}
+        onPrimaryButtonClick={() => _submitFile()}
+        primaryButtonProps={{ disabled: flagUploadFile !== undefined }}>
+        {filesUploadInfo &&
+          filesUploadInfo.map((file, key) => (
+            <UploadFileItem
+              key={key}
+              fileInfo={file}
+              file={objFiles[file.index]}
+              index={key}
+              flagUploadFile={flagUploadFile}
+              fileType={fileType}
+              directoryId={directoryId}
+              uploadNextFile={_uploadNextFile}
+              removeItem={_removeThisItem}
+              refresh={refresh}
+            />
+          ))}
       </CustomModal>
     </Stack>
   );
@@ -285,7 +272,7 @@ AddContentSchema.propTypes = {
   directoryId: PropTypes.string,
   onDismiss: PropTypes.func.isRequired,
   fileType: PropTypes.number.isRequired,
-  refreshDirectory: PropTypes.func.isRequired,
+  refresh: PropTypes.func.isRequired,
 };
 AddContentSchema.defaultProps = {
   directoryId: undefined,

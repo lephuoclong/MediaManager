@@ -1,19 +1,19 @@
 /** @format */
 
-import { Breadcrumb, IconButton, Stack, Text } from "@fluentui/react";
+import { Breadcrumb, IconButton, Stack, Toggle } from "@fluentui/react";
 import React, { useEffect, useState } from "react";
 import SpinnerLoading from "../../../components/multipleComponents/SpinnerLoading";
 import PropTypes from "prop-types";
-import { itemsFolderTree } from "../../../constants/initialApi/items";
 import DirectoryApi from "../../../API/ModuleAPI/DirectoryApi";
-import { LIGHT_THEME, MODEL_NAME, ROWS_PER_PAGE } from "../../../constants";
-import EmptyContent from "../../../components/layoutComponent/EmptyContent";
+import { MODEL_NAME } from "../../../constants";
 import CustomModal from "../../../components/modals";
-import CustomText from "../../../components/CustomText";
-import CustomButton from "../../../components/CustomButton";
 import AddContentSchema from "./AddContentSchema";
-import CustomDetailList from "../../../components/layoutComponent/CustomDetailList";
-import folderColumnSchema from "../ColumnsSchema/folderColumnSchema";
+import RestServiceHelper from "../../../API/RestServiceHelper";
+import CustomButton from "../../../components/CustomButton";
+import CustomText from "../../../components/CustomText";
+import ListFolder from "./ListFolder";
+import ListFile from "./ListFile";
+import { success } from "../../../components/ToastMessage";
 
 const warpFolderContent = {
   root: {
@@ -33,46 +33,48 @@ export default function ContentFolder(props) {
   const [isLoadingFolderContent, setIsLoadingFolderContent] = useState(true);
   const [selectFolderId, setSelectFolderId] = useState();
   const [folderTree, setFolderTree] = useState([]);
-  const [folders, setFolders] = useState([]);
-  const [files, setFiles] = useState([]);
   const [modalName, setModalName] = useState("");
-  const [pagination, setPagination] = useState({
-    page: 0,
-    totalPages: 0,
-    pageSize: ROWS_PER_PAGE.TEN,
-  });
+  const [isListFolder, setIsListFolder] = useState(true);
 
   const { folder } = props;
 
   const _getFolderTree = async () => {
-    // const folderTreeResult = await DirectoryApi.getFolderTreeByFolderId(
-    //   selectFolderId
-    // );
-    console.log("_getFolderTree success");
+    setIsLoadingFolderContent(true);
+    const folderTreeResult = await DirectoryApi.getFolderTreeByFolderId(
+      selectFolderId
+    );
+    let tempFolderTree = [];
+    if (folderTreeResult.isAxiosError) {
+      RestServiceHelper.handleResponse(folderTreeResult, "Folder Error");
+    } else {
+      const { data } = folderTreeResult;
+
+      for (const folder of data) {
+        const item =
+          data.indexOf(folder) === data.length - 1
+            ? {
+                key: folder.id,
+                text: folder.name,
+                isCurrentItem: true,
+              }
+            : {
+                key: folder.id,
+                text: folder.name,
+                onClick: _selectedItems,
+              };
+        tempFolderTree.push(item);
+      }
+      setFolderTree(tempFolderTree);
+    }
   };
 
-  const _getFolders = async () => {
-    const data = {
-      parentId: selectFolderId,
-      ...pagination,
-    };
-    const folders = await DirectoryApi.getFolderByParentId(data);
-
-    const { items, totalPages } = folders.data;
-
-    setFolders(items);
-    setPagination({ ...pagination, totalPages });
-    console.log("getFolders success");
-  };
-
-  const _getFiles = () => {
-    console.log("getFiles success");
+  const _selectedItems = (_e, folder) => {
+    setSelectFolderId(folder.key);
   };
 
   const _loadFolderContent = () => {
     _getFolderTree();
-    _getFolders();
-    _getFiles();
+    setIsLoadingFolderContent(false);
   };
 
   useEffect(() => {
@@ -88,118 +90,110 @@ export default function ContentFolder(props) {
     setModalName(name);
   };
 
-  const _handleChangePageIndex = async page => {
-    const data = {
-      parentId: selectFolderId,
-      ...pagination,
-      page,
-    };
+  const _selectFolder = id => {
+    setSelectFolderId(id);
+  };
 
-    const folders = await DirectoryApi.getFolderByParentId(data);
-    if (!folders.isAxiosError) {
-      const { items, totalPages } = folders.data;
-      setFolders(items);
-      setPagination({ ...pagination, page, totalPages });
+  const _deleteFolderClick = async () => {
+    const deleteDirectoryResult = await DirectoryApi.deleteDirectory(
+      selectFolderId
+    );
+    if (deleteDirectoryResult.isAxiosError) {
+      window.alert(deleteDirectoryResult.response.data.message, {
+        title: `Delete error!`,
+        actionText: `Close`,
+      });
+    } else {
+      success("Delete directory successfully!");
+      _selectFolder(folderTree[folderTree.length - 2].key);
     }
   };
 
-  const _handleChangePageSize = async pageSize => {
-    const data = {
-      parentId: selectFolderId,
-      ...pagination,
-      pageSize,
-      page: 0,
-    };
-    const folders = await DirectoryApi.getFolderByParentId(data);
-    if (!folders.isAxiosError) {
-      const { items, totalPages } = folders.data;
-      setFolders(items);
-      setPagination({ pageSize, page: 0, totalPages });
-    }
+  const menuProps = {
+    items: [
+      {
+        key: "add-content",
+        text: "Add Content",
+        onClick: () =>
+          _toggleAddContentClick(MODEL_NAME.ADD_CONTENT_TO_DOC_FOLDER),
+      },
+      {
+        key: "gird-layout",
+        text: "View in grid",
+      },
+      {
+        key: "list-layout",
+        text: "View in list",
+      },
+      {
+        key: "delete-folder",
+        text: <CustomText color='textDanger'>Delete Folder</CustomText>,
+        onClick: () => _deleteFolderClick(),
+      },
+    ],
+    directionalHint: 6,
+  };
+
+  const _isListFolder = value => {
+    setIsListFolder(value);
   };
 
   return (
     <Stack styles={warpFolderContent}>
       <Stack horizontal verticalAlign='center' horizontalAlign='space-between'>
-        <Breadcrumb
-          items={itemsFolderTree}
-          maxDisplayedItems={5}
-          overflowIndex={1}
-        />
-        <IconButton
-          iconProps={{
-            iconName: "more-svg",
-            styles: { root: { width: 36, height: 36 } },
-          }}
-          onClick={() =>
-            _toggleAddContentClick(MODEL_NAME.ADD_CONTENT_TO_DOC_FOLDER)
-          }
-        />
+        <Stack horizontal verticalAlign='center'>
+          {folderTree.length && (
+            <Breadcrumb
+              items={folderTree.filter(i => i.isCurrentItem !== true)}
+              overflowAriaLabel='More links'
+              maxDisplayedItems={5}
+              overflowIndex={
+                folderTree.filter(i => i.isCurrentItem !== true)?.length === 1
+                  ? 0
+                  : 1
+              }
+              styles={{ root: { margin: 0 } }}
+            />
+          )}
+          {folderTree.length >= 1 &&
+            folderTree
+              .filter(i => i.isCurrentItem === true)
+              .map(item => <CustomButton {...item} />)}
+        </Stack>
+        <Stack horizontal verticalAlign='center' tokens={{ childrenGap: 10 }}>
+          <Toggle
+            onText='List Folder'
+            offText='List File'
+            defaultChecked
+            onChange={(_event, value) => _isListFolder(value)}
+            styles={{ root: { marginBottom: 0 } }}
+          />
+          <IconButton
+            iconProps={{
+              iconName: "more-svg",
+              styles: { root: { width: 36, height: 36 } },
+            }}
+            menuProps={menuProps}
+            styles={{ menuIcon: { display: "none" } }}
+          />
+        </Stack>
       </Stack>
 
-      {!isLoadingFolderContent ? (
+      {isLoadingFolderContent ? (
         <SpinnerLoading />
       ) : (
         <Stack styles={areaContent}>
-          {folders?.length + files?.length > 0 ? (
-            <>
-              {folders?.length > 0 ? (
-                <CustomDetailList
-                  items={folders}
-                  columns={folderColumnSchema("folder-svg")}
-                  isPagination
-                  pagingOptions={{
-                    ...pagination,
-                    onChangePageIndex: page => _handleChangePageIndex(page),
-                    // onChangePageIndex: page =>
-                    //   setPagination({ ...pagination, page }),
-                    onChangePageSize: pageSize =>
-                      _handleChangePageSize(pageSize),
-                    //   setPagination({ ...pagination, pageSize, page: 0 }),
-                  }}
-                />
-              ) : null}
-              {files?.length > 0 ? (
-                <CustomDetailList
-                  items={files}
-                  isPagination
-                  pagingOptions={{
-                    ...pagination,
-                    onChangePageIndex: page => _handleChangePageIndex(page),
-                    // onChangePageIndex: page =>
-                    //   setPagination({ ...pagination, page }),
-                    onChangePageSize: pageSize =>
-                      _handleChangePageSize(pageSize),
-                    //   setPagination({ ...pagination, pageSize, page: 0 }),
-                  }}
-                />
-              ) : null}
-            </>
+          {isListFolder ? (
+            <ListFolder
+              parentId={selectFolderId}
+              selectFolder={_selectFolder}
+              fileType={folder?.level}
+            />
           ) : (
-            <EmptyContent
-              title='This folder is empty'
-              subTitle='Please add content to this folder!'
-              imageProps={{
-                src: "/img/group-105.png",
-                srcSet: "/img/group-105-2x.png 2x, /img/group-105-3x.png 3x",
-                alt: "Empty data room content",
-                width: 376,
-                height: 280,
-              }}
-              primaryButtonProps={{
-                iconProps: {
-                  iconName: "plus-svg",
-                  styles: {
-                    root: {
-                      height: 26,
-                      fill: LIGHT_THEME.palette.white,
-                    },
-                  },
-                },
-                text: "Add Content",
-                onClick: () =>
-                  _toggleAddContentClick(MODEL_NAME.ADD_CONTENT_TO_DOC_FOLDER),
-              }}
+            <ListFile
+              parentId={selectFolderId}
+              selectFolder={_selectFolder}
+              fileType={folder?.level}
             />
           )}
         </Stack>
@@ -212,7 +206,7 @@ export default function ContentFolder(props) {
           directoryId={selectFolderId}
           onDismiss={_toggleAddContentClick}
           fileType={folder?.level}
-          refreshDirectory={_loadFolderContent}
+          refresh={_loadFolderContent}
         />
       </CustomModal>
     </Stack>
