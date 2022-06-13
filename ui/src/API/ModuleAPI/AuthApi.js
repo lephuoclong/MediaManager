@@ -12,5 +12,15 @@ class AuthApi {
     const url = `/auth/register`;
     return AxiosPort.post(url, data);
   };
+
+  checkPassword = data => {
+    const url = `/auth/check-password`;
+    return AxiosPort.post(url, data);
+  };
+
+  changePassword = data => {
+    const url = `/auth/change-password`;
+    return AxiosPort.post(url, data);
+  };
 }
 export default new AuthApi();

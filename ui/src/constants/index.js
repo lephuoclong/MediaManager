@@ -54,10 +54,11 @@ export const PAGE_PATHS = {
   MY_FOLDER: "my-folder",
   SHARE_WITH_ME: "share-with-me",
   FAVORITES: "favorites",
-  GARBAGE: "garbage",
+  MY_SHARE: "my-share",
   VIEW_FILE: "view-file",
   PROFILE: "profile",
   SEARCH: "search",
+  SEARCH_ALL: "search-all",
 };
 export const MODEL_NAME = {
   SEARCH_HEADER_MODEL: "SEARCH_HEADER_MODEL",
@@ -65,6 +66,9 @@ export const MODEL_NAME = {
   ADD_FOLDER_TO_DOC_FOLDER: "ADD_FOLDER_TO_DOC_FOLDER",
   ADD_FILE_TO_DOC_FOLDER: "ADD_FILE_TO_DOC_FOLDER",
   LIST_FILES: "LIST_FILES",
+  ADD_FOLDER_TO_SHARE: "ADD_FOLDER_TO_SHARE",
+  ADD_FILE_TO_SHARE: "ADD_FILE_TO_SHARE",
+  VIEW_FOLDER_IN_MY_SHARE: "VIEW_FOLDER_IN_MY_SHARE",
 };
 export const ROWS_PER_PAGE = {
   FIVE: 5,
@@ -106,10 +110,10 @@ export const NAV_GROUPS = [
     icon: "FavoriteStar",
   },
   {
-    key: "garbage",
-    name: "Garbage",
-    url: `/${PAGE_PATHS.GARBAGE}`,
-    icon: "RecycleBin",
+    key: "my-share",
+    name: "My share",
+    url: `/${PAGE_PATHS.MY_SHARE}`,
+    icon: "Send",
   },
 ];
 
@@ -124,6 +128,14 @@ export const TYPE_FILE = [
   { key: "photo", name: "photo", type: "image/jpeg", iconName: "pic-svg" },
   { key: "movie", name: "movie", type: "video/mp4", iconName: "mov-svg" },
 ];
+
+export const TYPE_FILE_NAME = {
+  DOCUMENT: "document",
+  MUSIC: "music",
+  PHOTO: "photo",
+  MOVIE: "movie",
+  FOLDER: "folder",
+};
 
 export const UPLOAD_FILE_STATUS = {
   READY_TO_UPLOAD: 0,

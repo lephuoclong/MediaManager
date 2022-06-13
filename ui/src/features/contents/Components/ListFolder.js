@@ -10,6 +10,7 @@ import CustomModal from "../../../components/modals";
 import { LIGHT_THEME, MODEL_NAME, ROWS_PER_PAGE } from "../../../constants";
 import folderColumnSchema from "../ColumnsSchema/folderColumnSchema";
 import PropTypes from "prop-types";
+import { success } from "../../../components/ToastMessage";
 
 const textFieldStyles = {
   field: {
@@ -27,6 +28,9 @@ export default function ListFolder(props) {
   const [folders, setFolders] = useState(undefined);
   const [folderName, setFolderName] = useState("");
   const [modalName, setModalName] = useState("");
+  const [idShare, setIdShare] = useState(undefined);
+  const [emailReceiver, setEmailReceiver] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [pagination, setPagination] = useState({
     page: 0,
     totalPages: 1,
@@ -77,7 +81,10 @@ export default function ListFolder(props) {
     }
   };
 
-  const _toggleAddContentClick = (name = "") => {
+  const _toggleModal = (name = "") => {
+    setEmailReceiver("");
+    setFolderName("");
+    setIsSubmitting(false);
     setModalName(name);
   };
 
@@ -85,18 +92,23 @@ export default function ListFolder(props) {
     setFolderName(value);
   };
 
+  const _handleReceiverFolder = value => {
+    setEmailReceiver(value);
+  };
+
   const _handelDismiss = () => {
     setFolderName();
-    _toggleAddContentClick();
+    _toggleModal();
   };
 
   const _submitContent = async () => {
     const data = {
       parentId: parentId,
-      name: folderName || "NewFolder",
+      name: folderName || "New Folder",
       level: fileType,
     };
 
+    setIsSubmitting(true);
     const createFolder = await DirectoryApi.createFolder(data);
 
     if (createFolder.isAxiosError) {
@@ -109,6 +121,36 @@ export default function ListFolder(props) {
     }
   };
 
+  const _submitAddFolderToShares = async e => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const data = {
+      directoryId: idShare,
+      emailReceiver,
+    };
+    const addFolderToShares = await DirectoryApi.addFolderToShare(data);
+    if (addFolderToShares.isAxiosError) {
+      window.alert(addFolderToShares.response.data.message, {
+        title: "Share folder error!",
+      });
+    } else {
+      success(addFolderToShares.data);
+    }
+  };
+
+  const _onShareFolder = row => {
+    if (row?.id) {
+      setIdShare(row.id);
+      setModalName(MODEL_NAME.ADD_FOLDER_TO_SHARE);
+    }
+  };
+
+  const _onDismissShareFolderModal = () => {
+    setIdShare(undefined);
+    setEmailReceiver("");
+    _toggleModal();
+  };
+
   useEffect(() => {
     parentId && _getFolders();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -119,7 +161,11 @@ export default function ListFolder(props) {
       {folders?.length > 0 ? (
         <CustomDetailList
           items={folders}
-          columns={folderColumnSchema("folder-svg", selectFolder, _getFolders)}
+          columns={folderColumnSchema(
+            selectFolder,
+            _getFolders,
+            _onShareFolder
+          )}
           isPagination
           pagingOptions={{
             ...pagination,
@@ -149,14 +195,13 @@ export default function ListFolder(props) {
               },
             },
             text: "Add Folder",
-            onClick: () =>
-              _toggleAddContentClick(MODEL_NAME.ADD_FOLDER_TO_DOC_FOLDER),
+            onClick: () => _toggleModal(MODEL_NAME.ADD_FOLDER_TO_DOC_FOLDER),
           }}
         />
       )}
       <CustomModal
         isOpen={modalName === MODEL_NAME.ADD_FOLDER_TO_DOC_FOLDER}
-        onDismiss={_toggleAddContentClick}
+        onDismiss={_toggleModal}
         title='Add folder'>
         <Stack>
           <Stack styles={{ root: { paddingBottom: 20 } }}>
@@ -165,6 +210,7 @@ export default function ListFolder(props) {
               value={folderName}
               onChange={(_e, value) => _handleFolderNameChange(value)}
               styles={textFieldStyles}
+              placeholder='Folder name'
             />
           </Stack>
           <Stack horizontal horizontalAlign='space-between'>
@@ -173,10 +219,41 @@ export default function ListFolder(props) {
               primary
               text='Add Folder'
               onClick={_submitContent}
-              disabled={folderName === ""}
+              disabled={folderName === "" || isSubmitting}
             />
           </Stack>
         </Stack>
+      </CustomModal>
+      <CustomModal
+        isOpen={modalName === MODEL_NAME.ADD_FOLDER_TO_SHARE}
+        onDismiss={_onDismissShareFolderModal}
+        title='Share Folder'>
+        <form onSubmit={_submitAddFolderToShares}>
+          <Stack>
+            <Stack styles={{ root: { paddingBottom: 20 } }}>
+              <TextField
+                autoFocus
+                value={emailReceiver}
+                onChange={(_e, value) => _handleReceiverFolder(value)}
+                styles={textFieldStyles}
+                placeholder='Email receiver'
+                type='email'
+              />
+            </Stack>
+            <Stack horizontal horizontalAlign='space-between'>
+              <CustomButton
+                text='Cancel'
+                onClick={_onDismissShareFolderModal}
+              />
+              <CustomButton
+                primary
+                text='Share Folder'
+                type='submit'
+                disabled={emailReceiver === "" || isSubmitting}
+              />
+            </Stack>
+          </Stack>
+        </form>
       </CustomModal>
     </>
   );

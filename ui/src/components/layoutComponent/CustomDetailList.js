@@ -7,9 +7,9 @@ import {
   Stack,
   Text,
 } from "@fluentui/react";
-import React, { useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
-import { LIGHT_THEME, ROWS_PER_PAGE } from "../../constants";
+import { LIGHT_THEME } from "../../constants";
 import CustomPagination from "./CustomPagination";
 
 const titleStyles = {
@@ -42,18 +42,18 @@ const classNames = mergeStyleSets({
 });
 
 export default function CustomDetailList(props) {
-  const [selectionDetails, setSelectionDetails] = useState();
   const {
     title,
-    isSelectionDetails,
     isPagination,
     pagingOptions,
     items,
     columns,
+    isHeaderVisible,
   } = props;
 
   const baseDetailList = (
     <ShimmeredDetailsList
+      isHeaderVisible={isHeaderVisible}
       items={items}
       columns={columns}
       selectionMode={SelectionMode.none}
@@ -67,7 +67,6 @@ export default function CustomDetailList(props) {
           {title}
         </Text>
       )}
-      {isSelectionDetails && <Text>{selectionDetails}</Text>}
       <div className={classNames.listWrapper}>{baseDetailList}</div>
       {isPagination ? <CustomPagination {...pagingOptions} /> : null}
     </Stack>
@@ -77,7 +76,6 @@ CustomDetailList.propTypes = {
   items: PropTypes.arrayOf(PropTypes.object).isRequired,
   columns: PropTypes.arrayOf(PropTypes.object).isRequired,
   title: PropTypes.string,
-  isSelectionDetails: PropTypes.bool,
   isPagination: PropTypes.bool,
   pagingOptions: PropTypes.shape({
     page: PropTypes.number,
@@ -85,10 +83,11 @@ CustomDetailList.propTypes = {
     onChangePageSize: PropTypes.func,
     onChangePageIndex: PropTypes.func,
   }),
+  isHeaderVisible: PropTypes.bool,
 };
 CustomDetailList.defaultProps = {
   title: undefined,
-  isSelectionDetails: false,
   isPagination: false,
   pagingOptions: undefined,
+  isHeaderVisible: true,
 };

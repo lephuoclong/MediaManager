@@ -31,15 +31,40 @@ const mediumButtonStyles = {
   },
 };
 
+const smallButtonStyles = {
+  root: {
+    height: 30,
+    padding: "8px 16px",
+  },
+  label: {
+    fontSize: FontSizes.size13,
+  },
+};
+
 export default function CustomButton(props) {
   const { styles, primary, size } = props;
 
   let sizeStyles = styles;
   if (size === "large") {
-    sizeStyles = largeButtonStyles;
+    sizeStyles = {
+      ...largeButtonStyles,
+      ...styles,
+      root: { ...largeButtonStyles?.root, ...styles?.root },
+    };
   }
   if (size === "medium") {
-    sizeStyles = mediumButtonStyles;
+    sizeStyles = {
+      ...mediumButtonStyles,
+      ...styles,
+      root: { ...mediumButtonStyles?.root, ...styles?.root },
+    };
+  }
+  if (size === "small") {
+    sizeStyles = {
+      ...smallButtonStyles,
+      ...styles,
+      root: { ...smallButtonStyles?.root, ...styles?.root },
+    };
   }
 
   if (primary) {

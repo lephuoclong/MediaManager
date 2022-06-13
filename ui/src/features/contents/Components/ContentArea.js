@@ -2,14 +2,7 @@
 
 import { Pivot, PivotItem, Stack, Text } from "@fluentui/react";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import {
-  LIGHT_THEME,
-  NAV_GROUPS,
-  PAGE_PATHS,
-  ROOT_FOLDER_ID,
-  ROWS_PER_PAGE,
-} from "../../../constants";
+import { LIGHT_THEME, ROOT_FOLDER_ID, ROWS_PER_PAGE } from "../../../constants";
 import { TEXT_TITLE, WH_100 } from "../../../constants/styles";
 import { BREAKPOINTS_RESPONSIVE } from "../../../constants/SVGTheme";
 import LoadingPage from "../../../components/multipleComponents/LoadingPage";
@@ -57,8 +50,6 @@ const pivotSettingStyles = {
 };
 
 export default function ContentArea() {
-  const { pathPage } = useParams();
-
   const [rootFolders, setRootFolders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [pagination, setPagination] = useState({
@@ -67,17 +58,13 @@ export default function ContentArea() {
     pageSize: ROWS_PER_PAGE.TEN,
   });
 
-  const pageContent = NAV_GROUPS.find(
-    nav => nav.key === (pathPage || PAGE_PATHS.MY_FOLDER)
-  );
-
   const _getRootFolders = async () => {
     const rootFolderResult = await DirectoryApi.getFolderByParentId({
       parentId: ROOT_FOLDER_ID,
       ...pagination,
     });
     if (rootFolderResult.isAxiosError) {
-      window.alert(rootFolderResult);
+      window.alert(rootFolderResult.response.data.message);
     } else {
       setRootFolders(rootFolderResult.data.items);
       setPagination({ ...pagination, totalPages: rootFolderResult.totalPages });
@@ -87,16 +74,13 @@ export default function ContentArea() {
 
   useEffect(() => {
     _getRootFolders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  if (pathPage === PAGE_PATHS.GARBAGE) {
-    return <Stack>thùng rác</Stack>;
-  }
 
   return (
     <Stack styles={displayTabStyles}>
       <Text variant='xLarge' styles={TEXT_TITLE}>
-        {pageContent.name}
+        My folder
       </Text>
       {isLoading ? (
         <LoadingPage />

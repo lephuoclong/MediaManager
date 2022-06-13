@@ -6,9 +6,9 @@ import CustomIconButton from "../../../components/CustomIconButton";
 import CustomText from "../../../components/CustomText";
 import { success } from "../../../components/ToastMessage";
 
-const renderNameColumn = (item, iconName, selectFolder) => (
+const renderNameColumn = (item, selectFolder) => (
   <Stack horizontal verticalAlign='center'>
-    <Icon iconName={iconName} styles={{ root: { width: 36, height: 36 } }} />{" "}
+    <Icon iconName='folder-svg' styles={{ root: { width: 36, height: 36 } }} />{" "}
     <Link
       onClick={() => selectFolder(item.id)}
       styles={{ root: { paddingLeft: 20 } }}>
@@ -63,17 +63,13 @@ const _onAddFavorite = async row => {
   }
 };
 
-const _onShareFolder = row => {
-  // TODO: handle share folder
-};
-
-const _getFolderMenuProps = (row, refreshFolders) => {
+const _getFolderMenuProps = (row, refreshFolders, onShareFolder) => {
   const result = {
     items: [
       {
         key: "share-folder",
         text: "Share this folder",
-        onClick: () => _onShareFolder(row),
+        onClick: () => onShareFolder(row),
       },
       {
         key: "add-to-favorite",
@@ -91,7 +87,7 @@ const _getFolderMenuProps = (row, refreshFolders) => {
   return result;
 };
 
-const _renderActionsBtn = (item, refreshFolders) => {
+const _renderActionsBtn = (item, refreshFolders, onShareFolder) => {
   return (
     <CustomIconButton
       className='action-btn-overlay'
@@ -105,12 +101,12 @@ const _renderActionsBtn = (item, refreshFolders) => {
       menuIconProps={{ iconName: "more-svg" }}
       title='Actions'
       ariaLabel='Actions'
-      menuProps={_getFolderMenuProps(item, refreshFolders)}
+      menuProps={_getFolderMenuProps(item, refreshFolders, onShareFolder)}
     />
   );
 };
 
-const folderColumnSchema = (iconName, selectFolder, refreshFolders) => [
+const folderColumnSchema = (selectFolder, refreshFolders, onShareFolder) => [
   {
     key: "name",
     name: "name",
@@ -119,7 +115,7 @@ const folderColumnSchema = (iconName, selectFolder, refreshFolders) => [
     iaSorted: true,
     isSortedDescending: true,
     isResizable: true,
-    onRender: item => renderNameColumn(item, iconName, selectFolder),
+    onRender: item => renderNameColumn(item, selectFolder),
   },
   {
     key: "actions",
@@ -127,7 +123,7 @@ const folderColumnSchema = (iconName, selectFolder, refreshFolders) => [
     fieldName: "actions",
     minWidth: 35,
     className: classNames.cellAction,
-    onRender: item => _renderActionsBtn(item, refreshFolders),
+    onRender: item => _renderActionsBtn(item, refreshFolders, onShareFolder),
   },
 ];
 

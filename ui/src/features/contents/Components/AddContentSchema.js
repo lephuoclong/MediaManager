@@ -1,6 +1,6 @@
 /** @format */
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import {
   Stack,
@@ -8,24 +8,19 @@ import {
   TextField,
   Toggle,
   IconButton,
-  Icon,
-  Text,
 } from "@fluentui/react";
 import CustomButton from "../../../components/CustomButton";
 import DirectoryApi from "../../../API/ModuleAPI/DirectoryApi";
 import CustomModal from "../../../components/modals";
 import {
   ANOTHER_VALUE,
-  LIGHT_THEME,
   MODEL_NAME,
-  TYPE_FILE,
   UPLOAD_FILE_STATUS,
 } from "../../../constants";
-import FileApi from "../../../API/ModuleAPI/FileApi";
 import UploadFileItem from "./UploadFileItem";
 import { error, success } from "../../../components/ToastMessage";
-import successToast from "../../../constants/SVGTheme/svg/successToast";
 import FileBiz from "../../../biz/FileBiz";
+import AppUtil from "../../../constants/utilService/AppUtil";
 
 const classNames = mergeStyleSets({
   fileInput: {
@@ -109,22 +104,6 @@ export default function AddContentSchema(props) {
     setOption(value);
   };
 
-  const renderNameType = () => {
-    if (Number(fileType) === 1) {
-      return "Document";
-    }
-    if (Number(fileType) === 2) {
-      return "Music";
-    }
-    if (Number(fileType) === 3) {
-      return "Photo";
-    }
-    if (Number(fileType) === 4) {
-      return "Movie";
-    }
-    return undefined;
-  };
-
   const _handleFolderNameChange = value => {
     setFolderName(value);
   };
@@ -203,7 +182,7 @@ export default function AddContentSchema(props) {
           label='Select folder or file'
           defaultChecked
           onText='Create Folder'
-          offText={`Upload ${renderNameType()} File`}
+          offText={`Upload ${AppUtil.renderNameType()} File`}
           onChange={(_e, value) => _selectFolderOrFile(value)}
         />
         {options ? (

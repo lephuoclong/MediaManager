@@ -190,11 +190,7 @@ export default function ContentFolder(props) {
               fileType={folder?.level}
             />
           ) : (
-            <ListFile
-              parentId={selectFolderId}
-              selectFolder={_selectFolder}
-              fileType={folder?.level}
-            />
+            <ListFile parentId={selectFolderId} fileType={folder?.level} />
           )}
         </Stack>
       )}

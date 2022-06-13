@@ -17,11 +17,13 @@ const stackWrapperStyles = {
     minHeight: "70vh",
   },
 };
+
 const boldText = {
   root: {
     fontWeight: FontWeights.bold,
   },
 };
+
 const subTextStyles = {
   root: {
     maxWidth: 510,
@@ -29,6 +31,7 @@ const subTextStyles = {
     marginBottom: 30,
   },
 };
+
 const primaryBtnStyles = {
   root: {
     height: 44,

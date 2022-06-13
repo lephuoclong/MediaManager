@@ -10,7 +10,6 @@ import ErrorPage from "./features/ErrorPage";
 import LayoutPage from "./layouts/LayoutPage";
 import { initializeFileTypeIcons } from "@uifabric/file-type-icons";
 import { SGV_REGISTER } from "./constants/SVGTheme";
-import CheckIn from "./security/CheckIn";
 import AlertDialog from "./components/AlertDialog";
 import ConfirmDialog from "./components/ConfirmDialog";
 import Login from "./features/auth/login";

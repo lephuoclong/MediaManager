@@ -123,12 +123,14 @@ export default function UploadFileItem(props) {
         _uploadFile();
       }
     }, 10);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [processUpload]);
 
   useEffect(() => {
     if (flagUploadFile === index) {
       _inUploadProgress();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [flagUploadFile]);
 
   return (

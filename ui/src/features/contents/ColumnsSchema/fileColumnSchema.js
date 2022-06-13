@@ -43,7 +43,7 @@ const _renderNameColumn = item => (
   </Stack>
 );
 
-const _renderActionsBtn = (item, refreshFile) => {
+const _renderActionsBtn = (item, refreshFile, onShareFile) => {
   return (
     <CustomIconButton
       className='action-btn-overlay'
@@ -57,7 +57,7 @@ const _renderActionsBtn = (item, refreshFile) => {
       menuIconProps={{ iconName: "more-svg" }}
       title='Actions'
       ariaLabel='Actions'
-      menuProps={_getFileMenuProps(item, refreshFile)}
+      menuProps={_getFileMenuProps(item, refreshFile, onShareFile)}
     />
   );
 };
@@ -77,10 +77,6 @@ const _onDeleteFile = async (row, refreshFile) => {
   }
 };
 
-const _onShareFile = row => {
-  // TODO: handle add file to share
-};
-
 const _onAddFavorite = async row => {
   const data = { fileId: row?.id };
   const addFavoriteResult = await FileApi.addToFavorite(data);
@@ -93,13 +89,13 @@ const _onAddFavorite = async row => {
   }
 };
 
-const _getFileMenuProps = (row, refreshFile) => {
+const _getFileMenuProps = (row, refreshFile, onShareFile) => {
   const result = {
     items: [
       {
         key: "share-folder",
         text: "Share this file",
-        onClick: () => _onShareFile(row),
+        onClick: () => onShareFile(row),
       },
       {
         key: "add-to-favorite",
@@ -117,7 +113,7 @@ const _getFileMenuProps = (row, refreshFile) => {
   return result;
 };
 
-const fileColumnSchema = refreshFile => [
+const fileColumnSchema = (refreshFile, onShareFile) => [
   {
     key: "displayName",
     name: "Name",
@@ -147,7 +143,7 @@ const fileColumnSchema = refreshFile => [
     fieldName: "actions",
     minWidth: 35,
     className: classNames.cellAction,
-    onRender: item => _renderActionsBtn(item, refreshFile),
+    onRender: item => _renderActionsBtn(item, refreshFile, onShareFile),
   },
 ];
 

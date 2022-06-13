@@ -14,7 +14,7 @@ import {
 import fileColumnSchema from "../ColumnsSchema/fileColumnSchema";
 import FileApi from "../../../API/ModuleAPI/FileApi";
 import CustomModal from "../../../components/modals";
-import { IconButton, mergeStyleSets, Stack } from "@fluentui/react";
+import { IconButton, mergeStyleSets, Stack, TextField } from "@fluentui/react";
 import { error, success } from "../../../components/ToastMessage";
 import CustomButton from "../../../components/CustomButton";
 import UploadFileItem from "./UploadFileItem";
@@ -33,6 +33,17 @@ const classNames = mergeStyleSets({
     cursor: "pointer",
   },
 });
+
+const textFieldStyles = {
+  field: {
+    fontSize: 12,
+    lineHeight: 14,
+  },
+  fieldGroup: {
+    height: 40,
+    padding: 0,
+  },
+};
 
 const btnUploadFile = {
   root: {
@@ -53,13 +64,15 @@ const btnSelectFile = {
 };
 
 export default function ListFile(props) {
-  const { parentId, selectFolder, fileType } = props;
+  const { parentId, fileType } = props;
   const [files, setFiles] = useState(undefined);
   const [modalName, setModalName] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [objFiles, setObjFiles] = useState([]);
   const [filesUploadInfo, setFilesUploadInfo] = useState([]);
   const [flagUploadFile, setFlagUploadFile] = useState(undefined);
+  const [emailReceiver, setEmailReceiver] = useState("");
+  const [idShare, setIdShare] = useState(undefined);
   const [pagination, setPagination] = useState({
     page: 0,
     totalPages: 1,
@@ -115,14 +128,16 @@ export default function ListFile(props) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [parentId]);
 
-  const _toggleAddFileClick = (name = "") => {
+  const _toggleModal = (name = "") => {
+    setEmailReceiver("");
+    setIsSubmitting(false);
     setModalName(name);
   };
 
   const _handelDismiss = () => {
     setFlagUploadFile(0);
     setFilesUploadInfo([]);
-    _toggleAddFileClick();
+    _toggleModal();
   };
 
   const _toggleModalListFiles = (modalName = "") => {
@@ -193,13 +208,48 @@ export default function ListFile(props) {
     }
   };
 
+  const _onShareFile = row => {
+    if (row?.id) {
+      setIdShare(row.id);
+      setModalName(MODEL_NAME.ADD_FILE_TO_SHARE);
+    }
+  };
+
+  const _onDismissShareFileModal = () => {
+    setIdShare(undefined);
+    setEmailReceiver("");
+    _toggleModal();
+  };
+
+  const _handleReceiverFile = value => {
+    setEmailReceiver(value);
+  };
+
+  const _submitAddFileToShares = async e => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    const data = {
+      fileId: idShare,
+      emailReceiver,
+    };
+    const addFileToShares = await FileApi.addFileToShare(data);
+    if (addFileToShares.isAxiosError) {
+      window.alert(addFileToShares.response.data.message, {
+        title: "Share file error!",
+        onClose: () => _onDismissShareFileModal(),
+      });
+    } else {
+      success(addFileToShares.data);
+    }
+  };
+
   return (
     <>
       {files?.length > 0 ? (
         <CustomDetailList
           striped
           items={files}
-          columns={fileColumnSchema(_getFiles)}
+          columns={fileColumnSchema(_getFiles, _onShareFile)}
           isPagination
           pagingOptions={{
             ...pagination,
@@ -229,14 +279,13 @@ export default function ListFile(props) {
               },
             },
             text: "Add File",
-            onClick: () =>
-              _toggleAddFileClick(MODEL_NAME.ADD_FILE_TO_DOC_FOLDER),
+            onClick: () => _toggleModal(MODEL_NAME.ADD_FILE_TO_DOC_FOLDER),
           }}
         />
       )}
       <CustomModal
         isOpen={modalName === MODEL_NAME.ADD_FILE_TO_DOC_FOLDER}
-        onDismiss={_toggleAddFileClick}
+        onDismiss={_toggleModal}
         title='Add File'>
         <Stack>
           <Stack styles={{ root: { paddingBottom: 20 } }}>
@@ -287,6 +336,34 @@ export default function ListFile(props) {
               removeItem={_removeThisItem}
             />
           ))}
+      </CustomModal>
+      <CustomModal
+        isOpen={modalName === MODEL_NAME.ADD_FILE_TO_SHARE}
+        onDismiss={_onDismissShareFileModal}
+        title='Share Folder'>
+        <form onSubmit={_submitAddFileToShares}>
+          <Stack>
+            <Stack styles={{ root: { paddingBottom: 20 } }}>
+              <TextField
+                autoFocus
+                value={emailReceiver}
+                onChange={(_e, value) => _handleReceiverFile(value)}
+                styles={textFieldStyles}
+                placeholder='Email receiver'
+                type='email'
+              />
+            </Stack>
+            <Stack horizontal horizontalAlign='space-between'>
+              <CustomButton text='Cancel' onClick={_onDismissShareFileModal} />
+              <CustomButton
+                primary
+                text='Share Folder'
+                type='submit'
+                disabled={emailReceiver === "" || isSubmitting}
+              />
+            </Stack>
+          </Stack>
+        </form>
       </CustomModal>
     </>
   );

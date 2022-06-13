@@ -12,9 +12,13 @@ import {
   PersonaSize,
   ContextualMenu,
 } from "@fluentui/react";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import AccountApi from "../../API/ModuleAPI/AccountApi";
 import CustomModal from "../../components/modals";
 import { LIGHT_THEME, MODEL_NAME, PAGE_PATHS } from "../../constants";
+import domainEvents from "../../constants/domainEvent";
+import eventBus from "../../constants/utilService/eventBus";
 import MenuLink from "./MenuLink";
 const useStyles = makeStyles({
   largerHeader: {
@@ -47,14 +51,26 @@ export default function Header(props) {
   const classes = useStyles();
   const [modalName, setModalName] = useState("");
   const [isShowMenuPersonal, setIsShowMenuPersonal] = useState(false);
+  const [accountInfo, setAccountInfo] = useState(undefined);
+  const [keySearch, setKeySearch] = useState("");
 
   const personalMenuRef = useRef(null);
+  const history = useNavigate();
+
+  const _onLogout = () => {
+    localStorage.removeItem("username");
+    localStorage.removeItem("fullName");
+    localStorage.removeItem("email");
+    localStorage.removeItem("token");
+    localStorage.removeItem("accountId");
+    history("login");
+  };
 
   const menuPersonals = [
     {
       key: "profile",
-      text: "Ba Long",
-      onClick: () => window.alert("go to profile page"),
+      text: `${accountInfo?.firstName} ${accountInfo?.lastName}` || "",
+      onClick: () => history(`/${PAGE_PATHS.SETTING}`),
     },
     {
       key: "email",
@@ -64,12 +80,12 @@ export default function Header(props) {
     {
       key: "setting",
       text: "settings",
-      onClick: () => window.alert(`/${PAGE_PATHS.setting}`),
+      onClick: () => history(`/${PAGE_PATHS.SETTING}`),
     },
     {
       key: "logout",
       text: "logout",
-      onClick: () => window.alert("logout"),
+      onClick: () => _onLogout(),
     },
   ];
 
@@ -78,6 +94,7 @@ export default function Header(props) {
   };
 
   const _disMissModal = () => {
+    setKeySearch("");
     setModalName("");
   };
 
@@ -88,6 +105,33 @@ export default function Header(props) {
   const _onHidePersonaMenu = () => {
     setIsShowMenuPersonal(false);
   };
+
+  const _getAccountInfo = async () => {
+    const accountResult = await AccountApi.getAccountInfo();
+
+    if (accountResult.isAxiosError) {
+      window.alert(accountResult.response.data.message);
+    } else {
+      setAccountInfo(accountResult.data);
+    }
+  };
+
+  useEffect(() => {
+    _getAccountInfo();
+    eventBus.subscribe(
+      this,
+      domainEvents.CHANGE_ACCOUNT_NAME_DOMAINEVENT,
+      () => {
+        _getAccountInfo();
+      }
+    );
+  }, []);
+
+  const _onSearch = () => {
+    _disMissModal();
+    history(`/search?q=${keySearch}`);
+  };
+
   return (
     <Stack className={classes.largerHeader}>
       <Stack
@@ -115,7 +159,7 @@ export default function Header(props) {
             onClick={() => _toggleSearch(MODEL_NAME.SEARCH_HEADER_MODEL)}
           />
           <Persona
-            text='Ba Long'
+            text={`${accountInfo?.firstName} ${accountInfo?.lastName}` || ""}
             ref={personalMenuRef}
             size={PersonaSize.size48}
             styles={{ root: { cursor: "pointer" } }}
@@ -124,14 +168,14 @@ export default function Header(props) {
           <CustomModal
             isOpen={modalName === MODEL_NAME.SEARCH_HEADER_MODEL}
             onDismiss={_disMissModal}
-            onPrimaryButtonClick={() => window.alert("okokok")}
+            onPrimaryButtonClick={() => _onSearch()}
             primaryButtonText='Search'
-            isSubmitting
+            primaryButtonProps={{ disabled: keySearch.length < 3 }}
             title='Search'>
             <SearchBox
               placeholder='Search'
-              // TODO: handle search box
-              onSearch={newValue => console.log("value is " + newValue)}
+              onChange={value => setKeySearch(value.target.value)}
+              onSearch={() => keySearch.length > 2 && _onSearch()}
             />
           </CustomModal>
           <ContextualMenu

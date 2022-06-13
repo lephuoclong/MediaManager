@@ -4,6 +4,9 @@ import { Nav, Stack } from "@fluentui/react";
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { LIGHT_THEME, NAV_GROUPS } from "../../constants";
+import Favorites from "../favorites";
+import MyShare from "../myShare";
+import ShareWithMe from "../shareWithMe";
 import ContentArea from "./Components/ContentArea";
 
 const navStyles = {
@@ -28,11 +31,10 @@ export default function Contents() {
       <Stack styles={contentArea}>
         <Routes>
           <Route exact path='/' element={<ContentArea />} />
-          <Route path='/:pathPage' element={<ContentArea />} />
-          {/* <Route path='/my-folder' element={<MyFolder />} />
+          <Route path='/my-folder' element={<ContentArea />} />
           <Route path='/share-with-me' element={<ShareWithMe />} />
           <Route path='/favorites' element={<Favorites />} />
-          <Route path='/garbage' element={<Garbage />} /> */}
+          <Route path='/my-share' element={<MyShare />} />
         </Routes>
       </Stack>
     </Stack>
