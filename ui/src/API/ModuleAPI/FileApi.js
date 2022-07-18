@@ -62,6 +62,11 @@ class FileApi {
     const url = `search/${data.fileType}?keySearch=${data.keySearch}&page=${data.page}&pageSize=${data.pageSize}`;
     return AxiosPort.get(url);
   };
+
+  getFileAsBytes = id => {
+    const url = `views/file/${id}`;
+    return AxiosPort.get(url);
+  };
 }
 
 export default new FileApi();

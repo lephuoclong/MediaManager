@@ -148,7 +148,6 @@ export default function Header(props) {
               alt='logo'
             />
           </Link>
-          <MenuLink />
         </Stack>
         <Stack horizontal verticalAlign='center'>
           <IconButton
