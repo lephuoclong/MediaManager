@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>an.awesome</groupId>
+  <artifactId>pipelinr</artifactId>
+  <version>0.5</version>
+  <name>PipelinR</name>
+  <description>A lightweight command processing pipeline ❍ ⇢ ❍ ⇢ ❍ for your Java awesome app.</description>
+  <url>https://github.com/sizovs/pipelinr</url>
+  <licenses>
+    <license>
+      <name>MIT License</name>
+      <url>https://github.com/sizovs/pipelinr</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <id>sizovs</id>
+      <name>Eduards Sizovs</name>
+      <email>eduards@sizovs.net</email>
+    </developer>
+  </developers>
+  <scm>
+    <connection>https://github.com/sizovs/pipelinr</connection>
+    <developerConnection>https://github.com/sizovs/pipelinr</developerConnection>
+    <url>https://github.com/sizovs/pipelinr</url>
+  </scm>
+</project>
